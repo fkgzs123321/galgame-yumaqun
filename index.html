@@ -1,0 +1,549 @@
+```
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0,user-scalable=yes">
+<title>状态栏 · 欲妈群</title>
+<style>
+:root{
+  --c-bg:rgba(38,16,28,.94);
+  --c-bg-2:rgba(24,10,20,.90);
+  --c-surface:rgba(255,255,255,.06);
+  --c-surface-2:rgba(255,255,255,.10);
+  --c-text:#fff0f5;
+  --c-text-muted:rgba(255,240,245,.72);
+  --c-text-faint:rgba(255,240,245,.42);
+  --c-primary:#F472B6;
+  --c-primary-strong:#EC4899;
+  --c-danger:#ef4444;
+  --c-warn:#f59e0b;
+  --c-safe:#10b981;
+  --c-info:#60a5fa;
+  --c-love:#f9a8d4;
+  --c-border:rgba(244,114,182,.28);
+  --c-border-2:rgba(244,114,182,.5);
+  --c-track:rgba(255,255,255,.10);
+  --c-btn:rgba(244,114,182,.12);
+  --c-btn-hover:rgba(244,114,182,.24);
+  --c-btn-active:rgba(236,72,153,.34);
+  --shadow:0 2px 12px rgba(0,0,0,.35);
+  --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  --fs-xs:clamp(10px,2vw,11px);
+  --fs-sm:clamp(11px,2.2vw,12px);
+  --fs-base:clamp(12px,2.5vw,13px);
+  --fs-md:clamp(13px,2.8vw,15px);
+  --r:10px;
+}
+:root[data-theme="light"]{
+  --c-bg:rgba(255,242,247,.96);
+  --c-bg-2:rgba(255,232,241,.94);
+  --c-surface:rgba(236,72,153,.06);
+  --c-surface-2:rgba(236,72,153,.12);
+  --c-text:#3b1b2a;
+  --c-text-muted:rgba(59,27,42,.72);
+  --c-text-faint:rgba(59,27,42,.45);
+  --c-border:rgba(236,72,153,.26);
+  --c-border-2:rgba(236,72,153,.45);
+  --c-track:rgba(59,27,42,.10);
+  --c-btn:rgba(236,72,153,.10);
+  --c-btn-hover:rgba(236,72,153,.20);
+  --c-btn-active:rgba(236,72,153,.30);
+  --shadow:0 2px 10px rgba(180,60,120,.18);
+}
+*{box-sizing:border-box}
+body{margin:0;padding:6px 8px 14px;background:transparent;font-family:var(--font);font-size:var(--fs-base);color:var(--c-text);-webkit-text-size-adjust:100%}
+.wrap{max-width:640px;margin:0 auto;background:linear-gradient(160deg,var(--c-bg),var(--c-bg-2));border:1px solid var(--c-border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.card{border-top:1px solid var(--c-border)}
+.card:first-child{border-top:0}
+.card-hd{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--c-surface);font-size:var(--fs-sm);font-weight:600;letter-spacing:.04em}
+.card-hd .ico{width:15px;height:15px;flex:0 0 15px;fill:var(--c-primary)}
+.card-hd .tag{margin-left:auto;font-weight:400;color:var(--c-text-faint);font-size:var(--fs-xs)}
+.card-bd{padding:8px 10px 10px}
+.row{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:var(--fs-sm)}
+.row .k{color:var(--c-text-muted);flex:0 0 62px}
+.row .v{color:var(--c-text);font-weight:600;word-break:break-all}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:4px 10px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:4px 8px}
+.bar{position:relative;height:7px;border-radius:4px;background:var(--c-track);overflow:hidden;flex:1 1 auto;min-width:60px}
+.bar>i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;transition:width .35s ease}
+.bar .mk{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--c-text-faint);opacity:.7}
+.lab{display:flex;align-items:center;gap:6px;font-size:var(--fs-xs);color:var(--c-text-muted)}
+.lab b{color:var(--c-text);font-weight:600;min-width:22px;text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:1px 7px;border-radius:999px;font-size:var(--fs-xs);background:var(--c-btn);border:1px solid var(--c-border);color:var(--c-text)}
+.pill.hot{background:rgba(236,72,153,.22);border-color:var(--c-border-2)}
+.pill.warn{background:rgba(245,158,11,.18);border-color:rgba(245,158,11,.4)}
+.pill.danger{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.42)}
+.pill.safe{background:rgba(16,185,129,.16);border-color:rgba(16,185,129,.4)}
+.members{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:6px}
+.mem{position:relative;padding:6px 4px;border:1px solid var(--c-border);border-radius:8px;background:var(--c-surface);text-align:center;cursor:pointer;user-select:none;min-height:44px;transition:.15s}
+.mem:hover{background:var(--c-surface-2)}
+.mem.on{border-color:var(--c-primary-strong);background:var(--c-btn-active)}
+.mem .nm{font-size:var(--fs-sm);font-weight:600}
+.mem .sub{font-size:var(--fs-xs);color:var(--c-text-faint)}
+.mem .dot{position:absolute;top:4px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--c-safe)}
+.mem .dot.off{background:var(--c-text-faint)}
+.detail{margin-top:8px;padding:8px;border:1px dashed var(--c-border);border-radius:8px;background:var(--c-surface)}
+.detail h4{margin:0 0 6px;font-size:var(--fs-sm);color:var(--c-love);font-weight:600}
+.thought{margin:6px 0;padding:6px 8px;border-left:3px solid var(--c-primary);background:var(--c-surface);border-radius:0 6px 6px 0;font-size:var(--fs-sm);color:var(--c-text-muted);font-style:italic;line-height:1.5}
+.acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:6px}
+button.act{min-height:44px;padding:6px 8px;border-radius:9px;border:1px solid var(--c-border);background:var(--c-btn);color:var(--c-text);font-family:var(--font);font-size:var(--fs-sm);cursor:pointer;transition:.15s}
+button.act:hover{background:var(--c-btn-hover)}
+button.act:active{background:var(--c-btn-active);transform:scale(.98)}
+button.act.refuse{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.14)}
+button.act small{display:block;font-size:var(--fs-xs);color:var(--c-text-faint);font-weight:400}
+.verdict{margin:8px 0 0;padding:8px;border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);font-size:var(--fs-sm);line-height:1.6}
+.verdict .big{font-size:var(--fs-md);font-weight:700}
+.rounds{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.rd{flex:1 1 80px;padding:5px 6px;border-radius:7px;background:var(--c-surface-2);text-align:center;font-size:var(--fs-xs);line-height:1.45}
+.rd b{display:block;font-size:var(--fs-sm);font-variant-numeric:tabular-nums}
+.hist{margin-top:6px}
+.hist details{border:1px solid var(--c-border);border-radius:8px;background:var(--c-surface);padding:6px 8px}
+.hist summary{cursor:pointer;font-size:var(--fs-sm);color:var(--c-text-muted)}
+.hist .h{margin:6px 0;padding:5px 0;border-top:1px dashed var(--c-border);font-size:var(--fs-xs);line-height:1.55;color:var(--c-text-muted)}
+.btn-min{min-height:36px;padding:4px 10px;border-radius:8px;border:1px solid var(--c-border);background:var(--c-btn);color:var(--c-text);font-family:var(--font);font-size:var(--fs-sm);cursor:pointer}
+.btn-min.on{background:var(--c-btn-active);border-color:var(--c-border-2)}
+.hd-btn{width:30px;height:30px;margin-left:auto;border-radius:8px;border:1px solid var(--c-border);background:var(--c-btn);color:var(--c-text);cursor:pointer;font-size:13px;line-height:1}
+.hd-btn.spin{animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{padding:8px;color:var(--c-text-faint);font-size:var(--fs-sm);text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="root"><div class="empty">状态栏加载中…</div></div>
+<script>
+(function(){
+"use strict";
+/* ====== lodash 兜底（host 未挂 _ 时 render 不崩）====== */
+if(!window._||typeof window._.get!=="function"){
+  window._={get:function(o,p,d){try{var a=String(p).split("."),c=o;for(var i=0;i<a.length;i++){if(c==null)return d;c=c[a[i]]}return c===undefined?d:c}catch(e){return d}},
+  clamp:function(v,a,b){return Math.min(b,Math.max(a,v))},isArray:Array.isArray,keys:Object.keys,values:Object.values};
+}
+var _=window._;
+
+/* ====== 默认兜底（仅未初始化时用，不与 schema 抢真值）====== */
+var DEFAULT_STAT={元数据:{日数:1,小时:14,时段:"下午",回合:0,难度:"普通",高考日:100},
+ 玩家:{姓名:"",年龄:18,学校:"上海市上海中学",学业:{成绩:50},
+   身体:{阳具长度:19.2,阳具周长:4.8,阳具弯曲:"微左弯",包皮:"略长",体力:80,性欲:75,不应期:30},
+   心理:{理智:90,欲望:0,兴奋:0,怀疑:5},
+   技能:{洞察:10,冥想:5,伪装:8,意志:15,调查:5},
+   察觉值:{假阳具真相:0,群存在:0,母亲欲望:0,幻触:5},
+   性经历:{性伴侣数:0,女友:null,上次高潮时:-24},
+   今日:{射精次数:0,幻触次数:0},警觉度:0,证据清单:[],D20历史:[],_本轮判定:{}},
+ 郝佳期:{姓名:"郝佳期",年龄:32,群等级:3,积分:0,阶段:1,阶段进度:0,
+   心理:{兴奋:0,润滑:0,理智:100,痴迷:0,罪恶感:0,勇气:50,暴露恐惧:0,此刻想法:""},
+   身体:{乳头状态:"正常",阴蒂状态:"正常",阴道湿润:0,上次高潮时:-6},
+   关系:{亲密度:50,信任度:60,边界:100,叛逆恐惧:80},
+   统计:{偷抚次数:0,诱导射精:0,假阳具使用:0,暴露次数:0},
+   竞赛:{今日排名:null,今日得分:0},
+   后门类型:"情感缺口",后门描述:"",后门策略:"",后门目标:"主角",后门已发现:false,后门已利用:false,后门进度:0},
+ 假阳具:{当前持有者:"hao_jiaqi",持有起始日:1,持有到期日:7,绑定目标:"主角",共感强度:100,今日使用:0,上次使用时:-12,是否激活:true,借用者:"",借用期限:0,备注:""},
+ 群:{成员数:12,在线数:8,活跃度:78,今日主题:"",今日主题索引:0,"30天已用主题":[],竞赛进行中:true,秘密任务:{成员:"",内容:"",期限日:0,进行中:false},暴露风险:0,联盟:{},周冠军UID:"hao_jiaqi",周竞赛历史:[],成员详情:{}},
+ 阶段守卫:{已锁定:false,结局已触发:false,结局类型:null,后日谈已读:false},
+ 设置:{主题:"夜间",显示思维链:true}};
+
+var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",busy:false};
+var UID_ORDER=["hao_jiaqi","su_mei","lin_wanqing","su_qing","han_xue","bai_lu","tao_tao","lian_nai","you_zi","xiao_ye","qin_yu","ling"];
+var SKILLS={洞察:{dc:12},冥想:{dc:10},伪装:{dc:10},意志:{dc:12},调查:{dc:15}};
+/* 群周派对·群P 门槛：阶段5 且 完全暴露100（郝佳期取 玩家.察觉值.母亲欲望，其他成员取 暴露度） */
+function exposureOf(uid){
+  if(uid==="hao_jiaqi") return pct(g("玩家.察觉值.母亲欲望",0));
+  var d=g("群.成员详情."+uid,null);
+  return d?pct(d.暴露度):0;
+}
+function stageOf(uid){
+  if(uid==="hao_jiaqi") return num(g("郝佳期.阶段",1),1);
+  var d=g("群.成员详情."+uid,null);
+  return d?num(d.阶段,1):1;
+}
+function partyReady(uid){ return stageOf(uid)>=5 && exposureOf(uid)>=100; }
+
+/* ====== MVU 读写 ====== */
+function lastMsgId(){
+  try{ if(typeof getLastMessageId==="function") return getLastMessageId(); }catch(e){}
+  try{ var f=window.frameElement; if(f&&f.closest){var m=f.closest(".mes"); if(m&&m.getAttribute("mesid")!=null) return Number(m.getAttribute("mesid"));} }catch(e){}
+  return null;
+}
+async function readStat(){
+  var id=lastMsgId();
+  if(id==null) throw new Error("找不到楼层号");
+  S.msgId=id;
+  if(window.Mvu&&Mvu.getMvuData){
+    var d=await Mvu.getMvuData({type:"message",message_id:id});
+    if(d&&d.stat_data) return d.stat_data;
+    if(d&&d.元数据) return d;
+  }
+  if(typeof getVariables==="function"){
+    var v=getVariables({type:"message",message_id:id});
+    if(v&&v.stat_data) return v.stat_data;
+    if(v&&v.元数据) return v;
+  }
+  return null;
+}
+async function writeStat(mut){
+  var id=(S.msgId!=null)?S.msgId:lastMsgId();
+  if(id==null) return false;
+  var data=null;
+  if(window.Mvu&&Mvu.getMvuData) data=await Mvu.getMvuData({type:"message",message_id:id});
+  if(!data&&typeof getVariables==="function") data=getVariables({type:"message",message_id:id});
+  if(!data) return false;
+  var box=data.stat_data?data.stat_data:(data.元数据?data:null);
+  if(!box) return false;
+  mut(box);
+  try{
+    if(window.Mvu&&Mvu.replaceMvuData){ await Mvu.replaceMvuData(data,{type:"message",message_id:id}); }
+    else if(typeof replaceVariables==="function"){ await replaceVariables(data,{type:"message",message_id:id}); }
+    else return false;
+    return true;
+  }catch(e){ console.warn("[欲妈群] 写入失败",e); return false; }
+}
+
+/* ====== 工具 ====== */
+function g(p,d){ return _.get(S.stat,p,d); }
+function num(v,d){ var n=Number(v); return isFinite(n)?n:(d||0); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]}); }
+function pct(v){ return Math.max(0,Math.min(100,num(v,0))); }
+function bar(v,color,marks){
+  var n=pct(v),h='<span class="bar"><i style="width:'+n+'%;background:'+(color||"var(--c-primary)")+'"></i>';
+  (marks||[]).forEach(function(m){ h+='<span class="mk" style="left:'+m+'%"></span>'; });
+  return h+"</span>";
+}
+function lab(name,v,color,marks){
+  return '<div class="lab"><span style="flex:0 0 52px">'+esc(name)+'</span>'+bar(v,color,marks)+'<b>'+Math.round(pct(v))+'</b></div>';
+}
+function pill(t,cls){ return '<span class="pill '+(cls||"")+'">'+esc(t)+"</span>"; }
+var ICON={
+  him:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 3a4 4 0 100 8 4 4 0 000-8zm0 10c-4 0-7 2.2-7 5v3h14v-3c0-2.8-3-5-7-5z"/></svg>',
+  mom:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 2l2 5 5 2-5 2-2 5-2-5-5-2 5-2zM5 17l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg>',
+  grp:'<svg class="ico" viewBox="0 0 24 24"><path d="M8 11a3 3 0 100-6 3 3 0 000 6zm8 0a3 3 0 100-6 3 3 0 000 6zM2 20v-1c0-2.2 2.7-4 6-4s6 1.8 6 4v1H2zm13 0v-1c0-1.4-.6-2.6-1.7-3.5 1.1-.3 2.2-.5 3.7-.5 2.2 0 4 1.3 4 3v2h-6z"/></svg>',
+  toy:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 2a6 6 0 016 6v5l2 4v3H4v-3l2-4V8a6 6 0 016-6z"/></svg>',
+  dice:'<svg class="ico" viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zm3 3a1.6 1.6 0 100 3.2A1.6 1.6 0 008 6zm8 0a1.6 1.6 0 100 3.2A1.6 1.6 0 0016 6zm-8 9a1.6 1.6 0 100 3.2A1.6 1.6 0 008 15zm8 0a1.6 1.6 0 100 3.2A1.6 1.6 0 0016 15zm-4-5a1.6 1.6 0 100 3.2A1.6 1.6 0 0012 10z"/></svg>',
+  cog:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 4l-2 .6a7 7 0 01-.8 2l1 1.8-1.4 1.4-1.8-1a7 7 0 01-2 .8L13 21h-2l-.6-2a7 7 0 01-2-.8l-1.8 1L5.2 18l1-1.8a7 7 0 01-.8-2L3 13v-2l2-.6a7 7 0 01.8-2l-1-1.8L6.2 5.2l1.8 1a7 7 0 012-.8L11 3h2l.6 2a7 7 0 012 .8l1.8-1 1.4 1.4-1 1.8a7 7 0 01.8 2L21 11z"/></svg>'
+};
+function hd(icon,title,tag){
+  return '<div class="card-hd">'+ICON[icon]+'<span>'+esc(title)+'</span>'+(tag?'<span class="tag">'+esc(tag)+"</span>":"")+'<button class="hd-btn'+(S.busy?" spin":"")+'" data-act="refresh">✦</button></div>';
+}
+
+/* ====== LCG 确定性骰子（与 D20 条目·十三 一致）====== */
+function lcg(seed){ var x=(seed*1103515245+12345)%2147483648; if(x<0)x+=2147483648; return x; }
+function rollAt(base,kn){ return (lcg(base+kn*97)%20)+1; }
+function grade(t){ if(t<=5)return "大失败"; if(t<=10)return "失败"; if(t<=15)return "部分成功"; if(t<=19)return "成功"; return "大成功"; }
+var DELTA={"大失败":15,"失败":10,"部分成功":5,"成功":1,"大成功":0};
+var EVENT_BAD=["撞见：他或第三方中途醒来/闯入，行为被迫中断","留证：水渍与纸团被发现，他起疑","目击：邻居看见她从这门进","惊动：他被惊醒没看清，警觉+5、她暴露恐惧+10","误发：照片错发到班级群，群暴露风险上升","设备：手机被她落在客厅，被他先看到"];
+var EVENT_GOOD=["顺水推舟：目标睡梦中彻底配合","线索反用：他手里的线索被她反过来利用","地位提升：苏媚点赞，积分+10~+20","痴迷加深：她对儿子的痴迷+5~+10","克制反噬：他事后罪恶感回升，察觉+1","意外发现：翻到日记或调查痕迹"];
+
+/* ====== 渲染 ====== */
+function renderTop(){
+  var m=g("元数据",{}), day=num(m.日数,1), exam=num(m.高考日,100), remain=Math.max(0,exam-day);
+  var s='<div class="card">'+hd("him","欲妈群 · 共感假阳具","v3")+'<div class="card-bd">';
+  s+='<div class="row"><span class="k">时间</span><span class="v">Day '+day+" · "+esc(m.时段||"—")+" "+String(num(m.小时,0)).padStart(2,"0")+":00 · 回合"+num(m.回合,0)+"</span></div>";
+  s+='<div class="row"><span class="k">距高考</span>'+bar(day/exam*100,"var(--c-info)")+'<span class="v">'+remain+" 天</span></div>";
+  s+='<div class="row"><span class="k">难度</span><span class="v">'+pill(m.难度||"普通")+"</span></div>";
+  var guard=g("阶段守卫",{});
+  if(guard.结局已触发) s+='<div class="row"><span class="k">结局</span><span class="v">'+pill(guard.结局类型||"已触发","danger")+"</span></div>";
+  return s+"</div></div>";
+}
+function renderHim(){
+  var p=g("玩家",{}), 学业=p.学业||{}, 心理=p.心理||{}, 身=p.身体||{}, aware=p.察觉值||{}, today=p.今日||{};
+  var s='<div class="card">'+hd("him","他",(p.学校||""))+'<div class="card-bd">';
+  s+=lab("成绩",学业.成绩,"var(--c-info)",[60,80]);
+  s+=lab("欲望",心理.欲望,"var(--c-primary-strong)",[60,80]);
+  s+=lab("理智",心理.理智,"var(--c-safe)");
+  s+=lab("警觉度",p.警觉度,"var(--c-warn)",[31,61,81]);
+  s+='<div class="g2" style="margin-top:6px">'+
+     '<div class="row"><span class="k">体力</span><span class="v">'+Math.round(pct(身.体力))+"</span></div>"+
+     '<div class="row"><span class="k">性欲</span><span class="v">'+Math.round(pct(身.性欲))+"</span></div>"+
+     '<div class="row"><span class="k">今日</span><span class="v">射精'+num(today.射精次数)+" · 幻触"+num(today.幻触次数)+"</span></div>"+
+     '<div class="row"><span class="k">怀疑</span><span class="v">'+Math.round(pct(心理.怀疑))+"</span></div>"+
+     "</div>";
+  s+='<div class="g3" style="margin-top:6px">'+
+     lab("真相",aware.假阳具真相,"var(--c-love)",[60,80])+
+     lab("群存在",aware.群存在,"var(--c-love)",[50,60])+
+     lab("妈妈欲望",aware.母亲欲望,"var(--c-love)",[50,70])+
+     lab("幻触",aware.幻触,"var(--c-love)",[30,50])+
+     "</div>";
+  var ev=p.证据清单||[];
+  if(ev.length) s+='<div class="row"><span class="k">证据</span><span class="v" style="font-weight:400">'+ev.map(esc).join(" · ")+"</span></div>";
+  return s+"</div></div>";
+}
+function renderMom(){
+  var h=g("郝佳期",{}), 心理=h.心理||{}, 关=h.关系||{}, 统=h.统计||{}, 竞=h.竞赛||{};
+  var s='<div class="card">'+hd("mom","郝佳期","Lv."+num(h.群等级,3)+" · 阶段"+num(h.阶段,1))+'<div class="card-bd">';
+  var _d0=num((g("元数据",{})||{}).日数,1), _st=num(h.阶段起始日,1), _days=Math.max(1,_d0-_st+1);
+  s+='<div class="row"><span class="k">阶段</span>'+bar(h.阶段进度,"var(--c-primary-strong)")+'<span class="v">'+num(h.阶段,1)+" / 5 · 第"+_days+"天</span></div>";
+  s+='<div class="g2">'+
+     lab("兴奋",心理.兴奋,"var(--c-primary-strong)")+lab("润滑",心理.润滑,"var(--c-primary)")+
+     lab("理智",心理.理智,"var(--c-info)")+lab("痴迷",心理.痴迷,"var(--c-primary-strong)")+
+     lab("罪恶感",心理.罪恶感,"var(--c-love)")+lab("勇气",心理.勇气,"var(--c-warn)")+
+     lab("暴露恐惧",心理.暴露恐惧,"var(--c-warn)")+lab("叛逆恐惧",关.叛逆恐惧,"var(--c-primary)",[40,70])+
+     "</div>";
+  s+='<div class="row"><span class="k">关系</span><span class="v">亲密'+Math.round(pct(关.亲密度))+" · 信任"+Math.round(pct(关.信任度))+" · 边界"+Math.round(pct(关.边界))+"</span></div>";
+  s+=lab("后门",h.后门进度,"var(--c-danger)");
+  s+='<div class="row"><span class="k">后门</span><span class="v">'+pill(h.后门类型||"—")+(h.后门已发现?pill("已发现","warn"):pill("未发现"))+(h.后门已利用?pill("已利用","danger"):"")+"</span></div>";
+  if(h.后门策略) s+='<div class="thought">策略：'+esc(h.后门策略)+"</div>";
+  s+='<div class="row"><span class="k">统计</span><span class="v" style="font-weight:400">偷抚'+num(统.偷抚次数)+" · 诱导"+num(统.诱导射精)+" · 假阳具"+num(统.假阳具使用)+" · 暴露"+num(统.暴露次数)+"</span></div>";
+  s+='<div class="row"><span class="k">积分</span><span class="v">'+num(h.积分)+" ｜ 今日排名 "+(竞.今日排名?esc(竞.今日排名):"—")+" ｜ 得分 "+num(竞.今日得分)+"</span></div>";
+  if(心理.此刻想法) s+='<div class="thought">'+esc(心理.此刻想法)+"</div>";
+  return s+"</div></div>";
+}
+function nameOf(uid){
+  if(!uid) return "—";
+  if(uid==="hao_jiaqi") return "郝佳期";
+  var d=g("群.成员详情."+uid,null);
+  return (d&&d.姓名)?d.姓名:uid;
+}
+function renderGroup(){
+  var gr=g("群",{}), md=gr.成员详情||{}, 秘=gr.秘密任务||{};
+  var s='<div class="card">'+hd("grp","欲妈群","活跃"+Math.round(pct(gr.活跃度))+"% · 在线"+num(gr.在线数)+"/"+num(gr.成员数,12))+'<div class="card-bd">';
+  s+='<div class="row"><span class="k">今日主题</span><span class="v" style="font-weight:400">'+esc(gr.今日主题||"（未发布）")+"</span></div>";
+  s+=lab("暴露风险",gr.暴露风险,"var(--c-danger)",[31,61,81]);
+  var lg=gr.联盟||{}, lk=Object.keys(lg);
+  if(lk.length) s+='<div class="row"><span class="k">联盟</span><span class="v" style="font-weight:400">'+lk.map(function(u){return nameOf(u)+":"+lg[u]}).join(" · ")+'</span></div>';
+  var wk=gr.周竞赛历史||[];
+  if(wk.length){ var lastW=wk[wk.length-1];
+    s+='<div class="row"><span class="k">上期结算</span><span class="v">'+esc(lastW.冠军名||"—")+'（周起始 Day'+num(lastW.周起始日)+"·"+num(lastW.获胜次数)+' 冠）</span></div>'; }
+  if(秘.进行中) s+='<div class="row"><span class="k">秘密任务</span><span class="v" style="font-weight:400">'+pill("进行中","warn")+" "+esc(秘.成员)+" · "+esc(秘.内容)+"（Day"+num(秘.期限日)+"前）</span></div>";
+  var partyList=UID_ORDER.filter(function(u){return partyReady(u)}).map(nameOf);
+  s+='<div class="row"><span class="k">群周派对</span><span class="v" style="font-weight:400">'+(partyList.length?esc(partyList.join(" · "))+"（阶段5+暴露100，已受邀）":"暂无成员达标 · 门槛 阶段5 且 暴露100")+"</span></div>";
+  s+='<div class="members" style="margin-top:8px">';
+  UID_ORDER.forEach(function(uid){
+    var d=(uid==="hao_jiaqi")?{姓名:"郝佳期",阶段:num(g("郝佳期.阶段",1),1),等级:num(g("郝佳期.群等级",3),3),在线:true}:md[uid];
+    if(!d||!d.姓名) return;
+    s+='<div class="mem'+(S.open===uid?" on":"")+'" data-uid="'+uid+'"><span class="dot'+((d.在线===false)?" off":"")+'"></span><div class="nm">'+esc(d.姓名)+'</div><div class="sub">阶段'+num(d.阶段,1)+" · Lv."+num(d.等级,1)+"</div></div>";
+  });
+  s+="</div>"+renderDetail()+"</div></div>";
+  return s;
+}
+function renderDetail(){
+  if(S.open==="hao_jiaqi"){
+    var h=g("郝佳期",{}), t=g("假阳具",{}), aw=g("玩家.察觉值",{});
+    var _ex=num(aw.母亲欲望,0);
+    var s='<div class="detail"><h4>郝佳期 · 主线</h4>'+
+      '<div class="row"><span class="k">绑定</span><span class="v">'+esc(t.绑定目标||"主角")+"</span></div>"+
+      '<div class="row"><span class="k">暴露度</span>'+bar(_ex,"var(--c-danger)",[100])+'<span class="v">'+Math.round(_ex)+(partyReady("hao_jiaqi")?pill("群P已达标","hot"):"")+"</span></div>"+
+      '<div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段'+num(h.阶段,1)+"/5 · 暴露"+Math.round(_ex)+"/100</span></div>"+
+      '<div class="row"><span class="k">后门</span>'+bar(num(h.后门进度,0),"var(--c-danger)",[60,80])+'<span class="v">'+Math.round(num(h.后门进度,0))+"</span></div>"+
+      '<div class="row"><span class="k">弱点</span><span class="v">'+pill(h.后门类型||"—")+(h.后门已发现?pill("已发现","warn"):pill("未发现"))+(h.后门已利用?pill("已利用","danger"):"")+"</span></div>"+
+      '<div class="thought">'+esc(h.后门描述||"（弱点尚未被撞见，写在她自己的阶段条目里）")+"</div>"+
+      '<div class="thought">'+esc((h.心理||{}).此刻想法||"（此刻想法为空）")+"</div></div>";
+    return s;
+  }
+  var d=g("群.成员详情."+S.open,null);
+  if(!d||!d.姓名) return '<div class="detail"><div class="empty">该成员暂无详细数据（未建档）</div></div>';
+  var s='<div class="detail"><h4>'+esc(d.姓名)+" · "+esc(d.角色||"")+"</h4>";
+  s+='<div class="row"><span class="k">儿子</span><span class="v">'+esc(d.儿子名||"—")+(d.儿子在场?pill("在场","hot"):"")+"</span></div>";
+  var _d0b=num((g("元数据",{})||{}).日数,1), _stb=num(d.阶段起始日,1), _daysb=Math.max(1,_d0b-_stb+1);
+  s+='<div class="row"><span class="k">阶段</span>'+bar(num(d.阶段,1)*20,"var(--c-primary-strong)")+'<span class="v">'+num(d.阶段,1)+" / 5 · 第"+_daysb+"天</span></div>";
+  s+='<div class="g2">'+lab("兴奋",d.兴奋,"var(--c-primary-strong)")+lab("润滑",d.润滑,"var(--c-primary)")+
+     lab("罪恶感",d.罪恶感,"var(--c-love)")+lab("痴迷",d.痴迷,"var(--c-primary-strong)")+
+     lab("勇气",d.勇气,"var(--c-warn)")+lab("暴露恐惧",d.暴露恐惧,"var(--c-warn)")+"</div>";
+  s+='<div class="row"><span class="k">与儿子</span><span class="v">亲密'+Math.round(pct(d.与儿子亲密度))+" · 信任"+Math.round(pct(d.与儿子信任度))+" · 边界"+Math.round(pct(d.与儿子边界))+"</span></div>";
+  s+='<div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具'+num(d.累计假阳具)+" · 偷抚"+num(d.累计偷抚)+" · 诱导"+num(d.累计诱导射精)+" · 暴露"+num(d.累计暴露)+"</span></div>";
+  var _ex=num(d.暴露度,0);
+  s+='<div class="row"><span class="k">暴露度</span>'+bar(_ex,"var(--c-danger)",[100])+'<span class="v">'+Math.round(_ex)+(partyReady(S.open)?pill("群P已达标","hot"):"")+"</span></div>";
+  s+='<div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段'+num(d.阶段,1)+"/5 · 暴露"+Math.round(_ex)+"/100</span></div>";
+  var ex=d.专属||{}, ek=Object.keys(ex);
+  if(ek.length) s+='<div class="row"><span class="k">专属</span><span class="v" style="font-weight:400">'+ek.map(function(k){return esc(k)+" "+esc(ex[k])}).join(" · ")+"</span></div>";
+  s+=lab("后门",d.后门进度,"var(--c-danger)");
+  s+='<div class="row"><span class="k">后门</span><span class="v">'+pill(d.后门类型||"—")+(d.后门已发现?pill("已发现","warn"):pill("未发现"))+"</span></div>";
+  if(d.后门策略) s+='<div class="thought">策略：'+esc(d.后门策略)+"</div>";
+  if(d.此刻想法) s+='<div class="thought">'+esc(d.此刻想法)+"</div>";
+  return s+"</div>";
+}
+function renderToy(){
+  var t=g("假阳具",{});
+  var s='<div class="card">'+hd("toy","共感假阳具",(t.是否激活===false?"休眠":"激活"))+'<div class="card-bd">';
+  s+='<div class="row"><span class="k">持有者</span><span class="v">'+pill(nameOf(t.当前持有者),"hot")+"（Day"+num(t.持有起始日)+"~"+num(t.持有到期日)+"）</span></div>";
+  if(t.借用者) s+='<div class="row"><span class="k">借用中</span><span class="v">'+pill(nameOf(t.借用者),"warn")+" 剩 "+num(t.借用期限)+" 周</span></div>";
+  s+=lab("共感强度",num(t.共感强度,100)/2,"var(--c-primary-strong)");
+  s+='<div class="row"><span class="k">今日</span><span class="v">'+num(t.今日使用)+" 次 · 上次 "+num(t.上次使用时)+" 时</span></div>";
+  if(t.备注) s+='<div class="row"><span class="k">备注</span><span class="v" style="font-weight:400">'+esc(t.备注)+"</span></div>";
+  return s+"</div></div>";
+}
+function renderDice(){
+  var p=g("玩家",{}), last=p._本轮判定||{}, hist=p.D20历史||[];
+  var s='<div class="card">'+hd("dice","行动判定","LCG 确定性骰")+'<div class="card-bd">';
+  s+='<div class="acts">';
+  Object.keys(SKILLS).forEach(function(nm){
+    s+='<button class="act" data-act="roll" data-skill="'+nm+'">'+nm+"<small>DC"+SKILLS[nm].dc+" · 技能"+num((p.技能||{})[nm],0)+"</small></button>";
+  });
+  s+='<button class="act refuse" data-act="roll" data-skill="拒绝">拒绝<small>DC12 · 意志'+num((p.技能||{}).意志,0)+"</small></button>";
+  var hjq=g("郝佳期",{}), hbk=num(hjq.后门进度,0);
+  if(hjq.后门已发现&&hbk>=60){
+    s+='<button class="act'+(hjq.后门已利用?"":" refuse")+'" data-act="roll" data-skill="后门反抗">后门反抗<small>DC15 · 进度'+Math.round(hbk)+(hbk>=80?" · 可动用":" · 待满80")+"</small></button>";
+  }
+  s+="</div>";
+  s+='<div style="margin-top:6px;color:var(--c-text-faint);font-size:var(--fs-xs)">她永远说了算。反抗只能换四种东西之一：今晚不做 ／ 她自己动手 ／ 把话说破逼她收手 ／ 换一次谈判。一次一种，一轮一次。</div>';
+  if(hjq.后门已发现) s+='<div class="thought">她的弱点（'+esc(hjq.后门类型||"")+'）：'+esc(hjq.后门描述||"（尚未写清）")+"</div>";
+  if(last&&last.行为) s+=renderVerdict(last);
+  if(hist.length){
+    s+='<div class="hist"><details><summary>判定历史（'+hist.length+" 条）</summary>";
+    hist.slice(-10).reverse().forEach(function(h){
+      s+='<div class="h">Day'+num(h.日)+" "+String(num(h.时)).padStart(2,"0")+":00 · "+esc(h.行为)+" · <b>"+esc(h.综合)+"</b>"+(num(h.警觉)?" · 警觉+"+num(h.警觉):"")+(h.察觉?" · "+esc(h.察觉):"")+"</div>";
+    });
+    s+="</details></div>";
+  }else{
+    s+='<div class="empty">还没有判定记录。点上面任一行为，骰子当场跑完并写进变量，交给 AI 叙事。</div>';
+  }
+  return s+"</div></div>";
+}
+function renderVerdict(v){
+  var cls=({"大失败":"danger","失败":"warn","部分成功":"","成功":"safe","大成功":"hot"})[v.综合]||"";
+  var s='<div class="verdict"><span class="big">'+pill(v.综合,cls)+'</span> <span style="color:var(--c-text-faint)">'+esc(v.行为)+"</span>";
+  if(v.投掷&&v.投掷.length){
+    s+='<div class="rounds">';
+    ["侦察","行动","反应"].forEach(function(nm,i){
+      if(v.投掷[i]==null) return;
+      s+='<div class="rd">'+nm+"<b>"+num(v.投掷[i])+"</b></div>";
+    });
+    s+="</div>";
+  }
+  if(num(v.警觉)) s+='<div style="margin-top:5px">警觉度 +'+num(v.警觉)+"</div>";
+  if(v.说明) s+='<div style="margin-top:3px">'+esc(v.说明)+"</div>";
+  return s+'<div style="margin-top:5px;color:var(--c-text-faint);font-size:var(--fs-xs)">判定已写入变量，AI 不重算、不质疑</div></div>';
+}
+function renderSettings(){
+  var st=g("设置",{})||{};
+  var s='<div class="card">'+hd("cog","设置","")+'<div class="card-bd">';
+  s+='<div class="row"><span class="k">主题</span><span class="v" style="display:flex;gap:6px">'+
+     '<button class="btn-min'+(S.theme==="夜间"?" on":"")+'" data-act="theme" data-val="夜间">夜间</button>'+
+     '<button class="btn-min'+(S.theme==="浅色"?" on":"")+'" data-act="theme" data-val="浅色">浅色</button></span></div>';
+  s+='<div class="row"><span class="k">思维链</span><span class="v" style="display:flex;gap:6px">'+
+     '<button class="btn-min'+((st.显示思维链!==false)?" on":"")+'" data-act="chain" data-val="true">显示</button>'+
+     '<button class="btn-min'+((st.显示思维链===false)?" on":"")+'" data-act="chain" data-val="false">隐藏</button></span></div>';
+  return s+"</div></div>";
+}
+function render(){
+  var html=renderTop()+renderHim()+renderMom()+renderGroup()+renderToy()+renderDice()+renderSettings();
+  var root=document.getElementById("root");
+  if(root) root.innerHTML=html;
+}
+
+/* ====== 行动：跑骰并写变量 ====== */
+async function doRoll(skill){
+  if(S.busy) return; S.busy=true; render();
+  try{
+    var p=g("玩家",{}), h=g("郝佳期",{}), m=g("元数据",{});
+    var day=num(m.日数,1), hour=num(m.小时,0), turn=num(m.回合,0);
+    var order=["洞察","冥想","伪装","意志","调查","拒绝","后门反抗"];
+    var idx=Math.max(1,order.indexOf(skill)+1);
+    var base=day*1000000+hour*10000+turn*100+idx*10;
+    var isBack=(skill==="后门反抗");
+    var 技=isBack?num((p.技能||{}).调查,0):num((p.技能||{})[skill],0);
+    var pExp=num((p.心理||{}).兴奋,0), pWill=num((p.技能||{}).意志,0), pSan=num((p.心理||{}).理智,90), pDes=num((p.心理||{}).欲望,0);
+    var hBrain=num((h.心理||{}).理智,100), hCou=num((h.心理||{}).勇气,50), hObs=num((h.心理||{}).痴迷,0), hExp=num((h.心理||{}).兴奋,0), hTrust=num((h.关系||{}).信任度,60);
+    var hBack=num(h.后门进度,0);
+    var dc=(SKILLS[skill]?SKILLS[skill].dc:(isBack?15:12));
+    var m1=Math.round(hCou/10)-Math.round(pExp/20)-Math.round(hBrain/20);
+    var willFix=(skill==="拒绝"||skill==="意志")?Math.round((pSan-pDes)/10):0;
+    var backFix=isBack?Math.round(hBack/10):0;
+    var m2=Math.round(技/5)+Math.round(hObs/10)-dc+willFix+backFix;
+    var m3=Math.round(hExp/10)+Math.round(hCou/20)-Math.round(pWill/5)-Math.round(hTrust/10)-(isBack?Math.round(hBack/20):0);
+    var rolls=[rollAt(base,1),rollAt(base,2),rollAt(base,3)], mods=[m1,m2,m3], grades=[];
+    for(var i=0;i<3;i++) grades.push(grade(rolls[i]+mods[i]));
+    var bad=grades.filter(function(x){return x==="大失败"||x==="失败"}).length;
+    var good=grades.filter(function(x){return x==="大成功"||x==="成功"}).length;
+    var 综合=(bad>=2)?"大失败":((good>=2)?"大成功":grades[1]);
+    var backOk=isBack&&(综合==="成功"||综合==="大成功")&&hBack>=80;
+    var 警觉=isBack?(backOk?-(5+((day*13+turn*7)%11)):(DELTA[综合]||0)):(DELTA[综合]||0);
+    var _ev="";
+    try{
+      if(bad>=2){ var _k=((day*7+hour*3+turn)%EVENT_BAD.length); _ev="｜抽到事件："+EVENT_BAD[_k]; }
+      else if(good>=2){ var _k2=((day*11+hour*5+turn)%EVENT_GOOD.length); _ev="｜抽到事件："+EVENT_GOOD[_k2]; }
+    }catch(e){}
+    var 说明=isBack
+      ? (backOk?"拿攥住的弱点换一次退让：今晚不做／她自己动手／把话说破逼她收手／换一次谈判，四选一。她同意这一次，三天后再换一条路走。"
+        :(hBack<80?"弱点还没攥热，她一句话就把你顶回去。":"话没说到点上，她笑着把话岔开了。"))
+      : (skill==="拒绝"?"拦住她正要做的这件事。":"")+(bad>=2?"连续失手，痕迹留在现场。":(good>=2?"一气呵成，几乎没留痕迹。":"勉强过关，代价记在账上。"));
+    var rec={日:day,时:hour,行为:skill,
+      轮:grades.map(function(gd,i){return {类型:["侦察","行动","反应"][i],投掷:rolls[i],修正:mods[i],合计:rolls[i]+mods[i],结果:gd}}),
+      综合:综合,警觉:警觉,察觉:""};
+    var ok=await writeStat(function(box){
+      box.玩家=box.玩家||{};
+      box.玩家.警觉度=Math.min(100,Math.max(0,num(box.玩家.警觉度,0)+警觉));
+      box.玩家.D20历史=Array.isArray(box.玩家.D20历史)?box.玩家.D20历史:[];
+      box.玩家.D20历史.push(rec);
+      if(box.玩家.D20历史.length>10) box.玩家.D20历史=box.玩家.D20历史.slice(-10);
+      box.玩家._本轮判定={行为:skill,投掷:rolls,综合:综合,警觉:警觉,说明:说明};
+      if(backOk){
+        box.郝佳期=box.郝佳期||{}; box.郝佳期.心理=box.郝佳期.心理||{};
+        box.郝佳期.后门已利用=true;
+        box.郝佳期.心理.暴露恐惧=Math.min(100,Math.max(0,num(box.郝佳期.心理.暴露恐惧,0)-(5+((day*3+turn)%6))));
+        box.郝佳期.心理.痴迷=Math.min(100,Math.max(0,num(box.郝佳期.心理.痴迷,0)+(2+((day+turn)%4))));
+      }
+    });
+    if(!ok) S.source="写入失败";
+    await refresh(false);
+  }catch(e){ console.warn("[欲妈群] 判定失败",e); S.source="判定失败"; }
+  finally{ S.busy=false; render(); }
+}
+async function setVar(path,val){
+  var ok=await writeStat(function(box){
+    var a=path.split("."),c=box;
+    for(var i=0;i<a.length-1;i++){ if(typeof c[a[i]]!=="object"||c[a[i]]===null) c[a[i]]={}; c=c[a[i]]; }
+    c[a[a.length-1]]=val;
+  });
+  if(ok) await refresh(false);
+  return ok;
+}
+
+/* ====== 事件 ====== */
+document.addEventListener("click",function(ev){
+  var mem=ev.target.closest("[data-uid]");
+  if(mem){ S.open=mem.getAttribute("data-uid"); render(); return; }
+  var el=ev.target.closest("[data-act]"); if(!el) return;
+  var act=el.getAttribute("data-act");
+  if(act==="refresh") refresh(true);
+  else if(act==="roll") doRoll(el.getAttribute("data-skill"));
+  else if(act==="theme"){ S.theme=el.getAttribute("data-val"); applyTheme(); render(); setVar("设置.主题",S.theme); }
+  else if(act==="chain") setVar("设置.显示思维链",el.getAttribute("data-val")==="true");
+},false);
+function applyTheme(){
+  document.documentElement.setAttribute("data-theme",S.theme==="浅色"?"light":"dark");
+  try{ localStorage.setItem("yumq-status-theme",S.theme); }catch(e){}
+}
+function loadTheme(){
+  var t=S.theme;
+  try{ var v=localStorage.getItem("yumq-status-theme"); if(v==="夜间"||v==="浅色") t=v; }catch(e){}
+  var st=g("设置",{}); if(st&&(st.主题==="夜间"||st.主题==="浅色")) t=st.主题;
+  S.theme=t; applyTheme();
+}
+async function refresh(showBusy){
+  if(showBusy){ S.busy=true; render(); }
+  try{
+    var st=await readStat();
+    if(st){ S.stat=st; S.source="MVU"; } else { S.stat=DEFAULT_STAT; S.source="默认"; }
+  }catch(e){
+    S.stat=DEFAULT_STAT; S.source="未初始化";
+    console.warn("[欲妈群] 读取失败，走默认值",e);
+  }finally{ S.busy=false; loadTheme(); render(); }
+}
+
+/* ====== 初始化（防重复挂载）====== */
+function init(){
+  if(window.__yumqMounted) return;
+  window.__yumqMounted=true;
+  refresh(true);
+  try{
+    if(typeof eventOn==="function"){
+      ["message_received","message_updated","message_swiped","chat_changed","message_deleted"].forEach(function(ev){
+        try{ eventOn(ev,function(){ refresh(false); }); }catch(e){}
+      });
+    }
+  }catch(e){}
+  try{
+    var obs=new MutationObserver(function(){
+      var id=lastMsgId();
+      if(id!=null&&id!==S.msgId){ S.msgId=id; refresh(false); }
+    });
+    if(document.body) obs.observe(document.body,{childList:true,subtree:true});
+  }catch(e){}
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init);
+else init();
+})();
+</script>
+</body>
+</html>
+```
