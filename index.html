@@ -242,7 +242,7 @@ var EVENT_GOOD=["顺水推舟：目标睡梦中彻底配合","线索反用：他
 /* ====== 渲染 ====== */
 function renderTop(){
   var m=g("元数据",{}), day=num(m.日数,1), exam=num(m.高考日,100), remain=Math.max(0,exam-day);
-  var s='<div class="card">'+hd("him","欲妈群 · 共感假阳具","v3")+'<div class="card-bd">';
+  var s='<div class="card">'+hd("him","欲妈群","v3")+'<div class="card-bd">';
   s+='<div class="row"><span class="k">时间</span><span class="v">Day '+day+" · "+esc(m.时段||"—")+" "+String(num(m.小时,0)).padStart(2,"0")+":00 · 回合"+num(m.回合,0)+"</span></div>";
   s+='<div class="row"><span class="k">距高考</span>'+bar(day/exam*100,"var(--c-info)")+'<span class="v">'+remain+" 天</span></div>";
   s+='<div class="row"><span class="k">难度</span><span class="v">'+pill(m.难度||"普通")+"</span></div>";
@@ -363,10 +363,9 @@ function renderDetail(){
 }
 function renderToy(){
   var t=g("假阳具",{});
-  var s='<div class="card">'+hd("toy","共感假阳具",(t.是否激活===false?"休眠":"激活"))+'<div class="card-bd">';
+  var s='<div class="card">'+hd("toy","假阳具",(t.是否激活===false?"休眠":"激活"))+'<div class="card-bd">';
   s+='<div class="row"><span class="k">持有者</span><span class="v">'+pill(nameOf(t.当前持有者),"hot")+"（Day"+num(t.持有起始日)+"~"+num(t.持有到期日)+"）</span></div>";
   if(t.借用者) s+='<div class="row"><span class="k">借用中</span><span class="v">'+pill(nameOf(t.借用者),"warn")+" 剩 "+num(t.借用期限)+" 周</span></div>";
-  s+=lab("共感强度",num(t.共感强度,100)/2,"var(--c-primary-strong)");
   s+='<div class="row"><span class="k">今日</span><span class="v">'+num(t.今日使用)+" 次 · 上次 "+num(t.上次使用时)+" 时</span></div>";
   if(t.备注) s+='<div class="row"><span class="k">备注</span><span class="v" style="font-weight:400">'+esc(t.备注)+"</span></div>";
   return s+"</div></div>";
