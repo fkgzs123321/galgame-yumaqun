@@ -129,7 +129,7 @@ var DEFAULT_STAT={元数据:{日数:1,小时:23,时段:"夜晚",回合:0,难度:
    心理:{理智:90,欲望:0,兴奋:0,怀疑:5},
    技能:{洞察:10,冥想:5,伪装:8,意志:15,调查:5},
    察觉值:{假阳具真相:0,群存在:0,母亲欲望:0,幻触:5},
-   今日:{射精次数:0,幻触次数:0},警觉度:0,证据清单:[],D20历史:[],_本轮判定:{}},
+   今日:{射精次数:0,幻触次数:0},警觉度:0,证据清单:"",D20历史:"",_本轮判定:{}},
  郝佳期:{姓名:"郝佳期",年龄:32,群等级:3,积分:0,阶段:1,阶段进度:0,
    心理:{兴奋:0,润滑:0,理智:100,痴迷:0,罪恶感:0,勇气:50,暴露恐惧:0,此刻想法:""},
    关系:{亲密度:50,信任度:60,边界:100,叛逆恐惧:80},
@@ -137,7 +137,7 @@ var DEFAULT_STAT={元数据:{日数:1,小时:23,时段:"夜晚",回合:0,难度:
    竞赛:{今日排名:null,今日得分:0},
    后门类型:"情感缺口",后门描述:"",后门策略:"",后门目标:"主角",后门已发现:false,后门已利用:false,后门进度:0},
  假阳具:{当前持有者:"hao_jiaqi",持有起始日:1,持有到期日:7,绑定目标:"主角",共感强度:100,今日使用:0,上次使用时:-12,是否激活:true,借用者:"",借用期限:0,备注:""},
- 群:{成员数:12,在线数:8,活跃度:78,今日主题:"",今日主题索引:0,"30天已用主题":[],竞赛进行中:true,秘密任务:{成员:"",内容:"",期限日:0,进行中:false},暴露风险:0,联盟:{},周冠军UID:"hao_jiaqi",周竞赛历史:[],成员详情:{}},
+ 群:{成员数:12,在线数:8,活跃度:78,今日主题:"",今日主题索引:0,"30天已用主题":"",竞赛进行中:true,秘密任务:{成员:"",内容:"",期限日:0,进行中:false},暴露风险:0,联盟:{},周冠军UID:"hao_jiaqi",周竞赛历史:"",成员详情:{}},
  阶段守卫:{已锁定:false,结局已触发:false,结局类型:null,后日谈已读:false},
  设置:{主题:"夜间",显示思维链:true}};
 
@@ -271,7 +271,7 @@ function renderHim(){
      "</div>";
   var jp=p._本轮判定||{};
   if(jp.行为||jp.说明) s+='<div class="row"><span class="k">本轮判定</span><span class="v" style="font-weight:400">'+pill(jp.行为||"—")+(jp.综合?pill(jp.综合,(String(jp.综合).indexOf("大成功")>=0||String(jp.综合).indexOf("成功")>=0)?"hot":"warn"):"")+(jp.说明?" "+esc(jp.说明):"")+"</span></div>";
-  var ev=p.证据清单||[];
+  var ev=String(p.证据清单||"").split("、").filter(Boolean);
   if(ev.length) s+='<div class="row"><span class="k">证据</span><span class="v" style="font-weight:400">'+ev.map(esc).join(" · ")+(ev.length>=3?pill("已达法律结局线","danger"):"（满3件触发法律结局）")+"</span></div>";
   return s+"</div></div>";
 }
@@ -309,9 +309,9 @@ function renderGroup(){
   s+=lab("暴露风险",gr.暴露风险,"var(--c-danger)",[31,61,81]);
   var lg=gr.联盟||{}, lk=Object.keys(lg);
   if(lk.length) s+='<div class="row"><span class="k">联盟</span><span class="v" style="font-weight:400">'+lk.map(function(u){return nameOf(u)+":"+lg[u]}).join(" · ")+'</span></div>';
-  var wk=gr.周竞赛历史||[];
-  if(wk.length){ var lastW=wk[wk.length-1];
-    s+='<div class="row"><span class="k">上期结算</span><span class="v">'+esc(lastW.冠军名||"—")+'（周起始 Day'+num(lastW.周起始日)+"·"+num(lastW.获胜次数)+' 冠）</span></div>'; }
+  var wk=String(gr.周竞赛历史||"").split("；").filter(Boolean);
+  if(wk.length){ var lw=wk[wk.length-1].split("|");
+    s+='<div class="row"><span class="k">上期结算</span><span class="v">'+esc(lw[1]||"—")+"（周起始 Day"+num(lw[0],1)+'）</span></div>'; }
   if(秘.进行中) s+='<div class="row"><span class="k">秘密任务</span><span class="v" style="font-weight:400">'+pill("进行中","warn")+" "+esc(秘.成员)+" · "+esc(秘.内容)+"（Day"+num(秘.期限日)+"前）</span></div>";
   var partyList=UID_ORDER.filter(function(u){return partyReady(u)}).map(nameOf);
   s+='<div class="row"><span class="k">群周派对</span><span class="v" style="font-weight:400">'+(partyList.length?esc(partyList.join(" · "))+"（阶段5+暴露100，已受邀）":"暂无成员达标 · 门槛 阶段5 且 暴露100")+"</span></div>";
@@ -371,7 +371,7 @@ function renderToy(){
   return s+"</div></div>";
 }
 function renderDice(){
-  var p=g("玩家",{}), last=p._本轮判定||{}, hist=p.D20历史||[];
+  var p=g("玩家",{}), last=p._本轮判定||{}, hist=String(p.D20历史||"").split("；").filter(Boolean);
   var s='<div class="card">'+hd("dice","行动判定","LCG 确定性骰")+'<div class="card-bd">';
   s+='<div class="acts">';
   Object.keys(SKILLS).forEach(function(nm){
@@ -465,15 +465,13 @@ async function doRoll(skill){
       ? (backOk?"拿攥住的弱点换一次退让：今晚不做／她自己动手／把话说破逼她收手／换一次谈判，四选一。她同意这一次，三天后再换一条路走。"
         :(hBack<80?"弱点还没攥热，她一句话就把你顶回去。":"话没说到点上，她笑着把话岔开了。"))
       : (skill==="拒绝"?"拦住她正要做的这件事。":"")+(bad>=2?"连续失手，痕迹留在现场。":(good>=2?"一气呵成，几乎没留痕迹。":"勉强过关，代价记在账上。"));
-    var rec={日:day,时:hour,行为:skill,
-      轮:grades.map(function(gd,i){return {类型:["侦察","行动","反应"][i],投掷:rolls[i],修正:mods[i],合计:rolls[i]+mods[i],结果:gd}}),
-      综合:综合,警觉:警觉,察觉:""};
+    var rec="Day"+day+" "+String(hour).padStart(2,"0")+":00 · "+skill+" · "+综合+(警觉?" · 警觉+"+警觉:"")+(backOk?" · 后门已利用":"");
     var ok=await writeStat(function(box){
       box.玩家=box.玩家||{};
       box.玩家.警觉度=Math.min(100,Math.max(0,num(box.玩家.警觉度,0)+警觉));
-      box.玩家.D20历史=Array.isArray(box.玩家.D20历史)?box.玩家.D20历史:[];
-      box.玩家.D20历史.push(rec);
-      if(box.玩家.D20历史.length>10) box.玩家.D20历史=box.玩家.D20历史.slice(-10);
+      var _h=String(box.玩家.D20历史||"").split("；").filter(Boolean);
+      _h.push(rec);
+      box.玩家.D20历史=_h.slice(-10).join("；");
       box.玩家._本轮判定={行为:skill,投掷:rolls,综合:综合,警觉:警觉,说明:说明};
       if(backOk){
         box.郝佳期=box.郝佳期||{}; box.郝佳期.心理=box.郝佳期.心理||{};
@@ -526,7 +524,35 @@ async function refresh(showBusy){
   }catch(e){
     S.stat=DEFAULT_STAT; S.source="未初始化";
     console.warn("[欲妈群] 读取失败，走默认值",e);
-  }finally{ S.busy=false; loadTheme(); render(); }
+  }finally{ S.busy=false; }
+  try{ await maintainLedger(); }catch(e){ console.warn("[欲妈群] 记账失败",e); }
+  loadTheme(); render();
+}
+/* 系统记账：这三个列表由面板维护，变量模型不写。
+   （Zod 卡拿不到 extensible，AI 只要对数组用 add 就会被 MVU 判 SCHEMA 违规） */
+async function maintainLedger(){
+  var box=S.stat||DEFAULT_STAT, gr=box.群||{}, md=box.元数据||{};
+  var theme=String(gr.今日主题||"").trim(); if(!theme) return;
+  var day=num(md.日数,1), weekStart=Math.max(1, day-((day-1)%7));
+  var champ=String(gr.周冠军UID||""), champName=(champ==="hao_jiaqi")?"郝佳期":nameOf(champ);
+  var needUsed=String(gr["30天已用主题"]||"").split("、").filter(Boolean).indexOf(theme)<0;
+  var hist=String(gr.周竞赛历史||"").split("；").filter(Boolean);
+  var needWeek=(day%7===0)&&!!champ&&!hist.some(function(x){return x.split("|")[0]===String(weekStart);});
+  if(!needUsed&&!needWeek) return;
+  await writeStat(function(b){
+    b.群=b.群||{};
+    if(needUsed){
+      var a=String(b.群["30天已用主题"]||"").split("、").filter(Boolean);
+      if(a.indexOf(theme)<0) a.push(theme);
+      b.群["30天已用主题"]=a.slice(-30).join("、");
+    }
+    if(needWeek){
+      var c=String(b.群.周竞赛历史||"").split("；").filter(Boolean);
+      if(!c.some(function(x){return x.split("|")[0]===String(weekStart);})) c.push(weekStart+"|"+champName);
+      b.群.周竞赛历史=c.slice(-8).join("；");
+    }
+  });
+  S.stat=null; var st=await readStat(); if(st) S.stat=st;
 }
 
 /* ====== 初始化（防重复挂载）====== */
