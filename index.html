@@ -139,7 +139,7 @@ var DEFAULT_STAT={元数据:{日数:1,小时:23,时段:"夜晚",回合:0,难度:
  假阳具:{当前持有者:"hao_jiaqi",持有起始日:1,持有到期日:7,绑定目标:"主角",共感强度:100,今日使用:0,上次使用时:-12,是否激活:true,借用者:"",借用期限:0,备注:""},
  群:{成员数:12,在线数:8,活跃度:78,今日主题:"",今日主题索引:0,"30天已用主题":"",竞赛进行中:true,秘密任务:{成员:"",内容:"",期限日:0,进行中:false},暴露风险:0,联盟:{},周冠军UID:"hao_jiaqi",周竞赛历史:"",成员详情:{}},
  阶段守卫:{已锁定:false,结局已触发:false,结局类型:null,后日谈已读:false},
- 设置:{主题:"夜间",显示思维链:true}};
+ 设置:{主题:"夜间"}};
 
 var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",busy:false};
 var UID_ORDER=["hao_jiaqi","su_mei","lin_wanqing","su_qing","han_xue","bai_lu","tao_tao","lian_nai","you_zi","xiao_ye","qin_yu","ling"];
@@ -418,9 +418,6 @@ function renderSettings(){
   s+='<div class="row"><span class="k">主题</span><span class="v" style="display:flex;gap:6px">'+
      '<button class="btn-min'+(S.theme==="夜间"?" on":"")+'" data-act="theme" data-val="夜间">夜间</button>'+
      '<button class="btn-min'+(S.theme==="浅色"?" on":"")+'" data-act="theme" data-val="浅色">浅色</button></span></div>';
-  s+='<div class="row"><span class="k">思维链</span><span class="v" style="display:flex;gap:6px">'+
-     '<button class="btn-min'+((st.显示思维链!==false)?" on":"")+'" data-act="chain" data-val="true">显示</button>'+
-     '<button class="btn-min'+((st.显示思维链===false)?" on":"")+'" data-act="chain" data-val="false">隐藏</button></span></div>';
   return s+"</div></div>";
 }
 function render(){
@@ -504,7 +501,6 @@ document.addEventListener("click",function(ev){
   if(act==="refresh") refresh(true);
   else if(act==="roll") doRoll(el.getAttribute("data-skill"));
   else if(act==="theme"){ S.theme=el.getAttribute("data-val"); applyTheme(); render(); setVar("设置.主题",S.theme); }
-  else if(act==="chain") setVar("设置.显示思维链",el.getAttribute("data-val")==="true");
 },false);
 function applyTheme(){
   document.documentElement.setAttribute("data-theme",S.theme==="浅色"?"light":"dark");
