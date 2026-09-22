@@ -247,9 +247,11 @@ function g(p,d){ return _.get(S.stat,p,d); }
 /* ★ 取难度（2026-09-22）：优先读 stat_data.元数据.难度；读不到就读 chat 层的 欲妈群难度 兜底
    —— 因为开局表单在第 0 楼写、而面板读最新楼层，一旦有后续楼层就可能读不到。 */
 function 取难度(){
+  /* ★ 难度存【chat 层】—— 开局表单按同级生2 的写法先写 chat 层（切 swipe 会重建 message 层的变量，chat 层不动）。
+     所以这里【先读 chat】，再回落到 stat_data，都没有才用普通。 */
+  try{ if(typeof getVariables==="function"){ var c=getVariables({type:/chat/})||{}; var b=String(c.欲妈群难度||""); if(难度档[b]) return b; } }catch(e){}
   var a=String((g("元数据",{})||{}).难度||"");
   if(难度档 && 难度档[a]) return a;
-  try{ if(typeof getVariables==="function"){ var c=getVariables({type:/chat/})||{}; var b=String(c.欲妈群难度||""); if(难度档[b]) return b; } }catch(e){}
   return "普通";
 }
 function num(v,d){ var n=Number(v); return isFinite(n)?n:(d||0); }
