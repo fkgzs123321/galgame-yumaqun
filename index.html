@@ -332,6 +332,10 @@ function hd(icon,title,tag){
 function lcg(seed){ var x=(Math.imul(seed,1103515245)+12345)%2147483648; if(x<0)x+=2147483648; return x; }
 function mix32(x){ x=Math.imul(x^(x>>>16),2246822507); x=Math.imul(x^(x>>>13),3266489909); return (x^(x>>>16))>>>0; }
 function rollAt(base,kn){ return (mix32(lcg(base)+kn*7919)%20)+1; }
+/* ★★ 0~100 的掷值（引擎规范 E3：V = LCG(seed) × 100）
+   必须用它算 V：rollAt 是旧的 D20(1~20)，直接当 V 用的话 V 只有 0.1~2.0，
+   而 S 夹在 5~95 → V<S 恒成立 → 判定永远成功（子代理冒烟测出 5 次全成功）。 */
+function roll100(base,kn){ return (mix32(lcg(base)+kn*7919*13)%100000)/1000; }
 function grade(t){ if(t<=5)return "大失败"; if(t<=10)return "失败"; if(t<=15)return "部分成功"; if(t<=19)return "成功"; return "大成功"; }
 var DELTA={"大失败":15,"失败":10,"勉强成功":5,"成功":1,"大成功":0};
 var EVENT_BAD=["撞见：他或第三方中途醒来/闯入，行为被迫中断","留证：水渍与纸团被发现，他起疑","目击：邻居看见她从这门进","惊动：他被惊醒没看清，警觉+5、她暴露恐惧+10","误发：照片错发到班级群，群暴露风险上升","设备：手机被她落在客厅，被他先看到"];
@@ -704,7 +708,7 @@ async function doRoll(skill, 追发, 强制dc, 主对){
     /* ③ 差值 / 成功率 / 掷值 / 档位 */
     var D=Math.round((P-R)*100)/100;
     var 率=Math.max(5,Math.min(95,Math.round(50+D)));
-    var V=Math.round((rollAt(base,1)%100000)/1000*100)/100;
+    var V=Math.round(roll100(base,1)*100)/100;   /* 0.00~99.99（0~100 口径，见 roll100 注释） */
     var 成功=(V<率);
     var 综合=judgeTier(D,成功);
     var rolls=[V], mods=[], grades=[综合];
