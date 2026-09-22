@@ -126,23 +126,23 @@ var DEFAULT_STAT={元数据:{日数:1,小时:23,时段:"夜晚",回合:0,难度:
  玩家:{姓名:"",年龄:18,学校:"上海市上海中学",学业:{成绩:50},
    身体:{体力:80,性欲:75,不应期:30},
    心理:{理智:90,欲望:0,兴奋:0,怀疑:5},
-   技能:{洞察:10,冥想:5,伪装:8,意志:15,调查:5},
+   技能:{观察:10,行动:8,意志:15},
    察觉值:{假阳具真相:0,群存在:0,母亲欲望:0,幻触:5},
-   今日:{射精次数:0,幻触次数:0},警觉度:0,证据清单:"",D20历史:"",_本轮判定:{}},
+   今日:{射精次数:0,幻触次数:0},警觉度:0,证据清单:"",_本轮判定:{}},
  郝佳期:{姓名:"郝佳期",年龄:32,群等级:3,积分:0,阶段:1,阶段进度:0,
    心理:{兴奋:0,润滑:0,理智:100,痴迷:0,罪恶感:0,勇气:50,暴露恐惧:0,此刻想法:""},
    关系:{亲密度:50,信任度:60,边界:100,叛逆恐惧:80},
    统计:{偷抚次数:0,诱导射精:0,假阳具使用:0,暴露次数:0},
    竞赛:{今日排名:null,今日得分:0},
    后门类型:"情感缺口",后门描述:"",后门策略:"",后门目标:"主角",后门已发现:false,后门已利用:false,后门进度:0},
- 假阳具:{当前持有者:"hao_jiaqi",持有起始日:1,持有到期日:7,绑定目标:"主角",共感强度:100,今日使用:0,上次使用时:-12,是否激活:true,借用者:"",借用期限:0,备注:""},
+ 假阳具:{当前持有者:"hao_jiaqi",持有起始日:1,持有到期日:7,绑定目标:"主角",共感强度:100,今日使用:0,上次使用时:-12,是否激活:true,借用者:"",借用期限:0},
  群:{成员数:12,在线数:8,活跃度:78,今日主题:"",今日主题索引:0,"30天已用主题":"",竞赛进行中:true,秘密任务:{成员:"",内容:"",期限日:0,进行中:false},暴露风险:0,联盟:{},周冠军UID:"hao_jiaqi",周竞赛历史:"",成员详情:{}},
  阶段守卫:{已锁定:false,结局已触发:false,结局类型:null,后日谈已读:false},
  设置:{主题:"夜间"}};
 
 var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",busy:false};
 var UID_ORDER=["hao_jiaqi","su_mei","lin_wanqing","su_qing","han_xue","bai_lu","tao_tao","lian_nai","you_zi","xiao_ye","qin_yu","ling"];
-var SKILLS={洞察:{dc:12},冥想:{dc:10},伪装:{dc:10},意志:{dc:12},调查:{dc:15}};
+var SKILLS={观察:{dc:12},行动:{dc:10},意志:{dc:12}};
 /* 群周派对·群P 门槛：阶段5 且 完全暴露100（郝佳期取 玩家.察觉值.母亲欲望，其他成员取 暴露度） */
 // 每档能做到哪一步（服务玩法：玩家据此决定拦哪一条）
 var STAGE_LINE = {
@@ -346,8 +346,9 @@ function renderDetail(){
   s+='<div class="g2">'+lab("兴奋",d.兴奋,"var(--c-primary-strong)")+lab("润滑",d.润滑,"var(--c-primary)")+
      lab("罪恶感",d.罪恶感,"var(--c-love)")+lab("痴迷",d.痴迷,"var(--c-primary-strong)")+
      lab("勇气",d.勇气,"var(--c-warn)")+lab("暴露恐惧",d.暴露恐惧,"var(--c-warn)")+"</div>";
-  s+='<div class="row"><span class="k">与儿子</span><span class="v">亲密'+Math.round(pct(d.与儿子亲密度))+" · 信任"+Math.round(pct(d.与儿子信任度))+" · 边界"+Math.round(pct(d.与儿子边界))+"</span></div>";
-  s+='<div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具'+num(d.累计假阳具)+" · 偷抚"+num(d.累计偷抚)+" · 诱导"+num(d.累计诱导射精)+" · 暴露"+num(d.累计暴露)+"</span></div>";
+  var _r=d.关系||{}, _s=d.统计||{};
+  s+='<div class="row"><span class="k">与儿子</span><span class="v">亲密'+Math.round(pct(_r.亲密度))+" · 信任"+Math.round(pct(_r.信任度))+" · 边界"+Math.round(pct(_r.边界))+"</span></div>";
+  s+='<div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具'+num(_s.假阳具使用)+" · 偷抚"+num(_s.偷抚次数)+" · 诱导"+num(_s.诱导射精)+" · 暴露"+num(_s.暴露次数)+"</span></div>";
   var _ex=num(d.暴露度,0);
   s+='<div class="row"><span class="k">暴露度</span>'+bar(_ex,"var(--c-danger)",[100])+'<span class="v">'+Math.round(_ex)+(partyReady(S.open)?pill("群P已达标","hot"):"")+"</span></div>";
   s+='<div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段'+num(d.阶段,1)+"/5 · 暴露"+Math.round(_ex)+"/100</span></div>";
@@ -366,11 +367,10 @@ function renderToy(){
   s+='<div class="row"><span class="k">持有者</span><span class="v">'+pill(nameOf(t.当前持有者),"hot")+"（Day"+num(t.持有起始日)+"~"+num(t.持有到期日)+"）</span></div>";
   if(t.借用者) s+='<div class="row"><span class="k">借用中</span><span class="v">'+pill(nameOf(t.借用者),"warn")+" 剩 "+num(t.借用期限)+" 周</span></div>";
   s+='<div class="row"><span class="k">今日</span><span class="v">'+num(t.今日使用)+" 次 · 上次 "+num(t.上次使用时)+" 时</span></div>";
-  if(t.备注) s+='<div class="row"><span class="k">备注</span><span class="v" style="font-weight:400">'+esc(t.备注)+"</span></div>";
   return s+"</div></div>";
 }
 function renderDice(){
-  var p=g("玩家",{}), last=p._本轮判定||{}, hist=String(p.D20历史||"").split("；").filter(Boolean);
+  var p=g("玩家",{}), last=p._本轮判定||{};
   var s='<div class="card">'+hd("dice","行动判定","LCG 确定性骰")+'<div class="card-bd">';
   s+='<div class="acts">';
   Object.keys(SKILLS).forEach(function(nm){
@@ -385,15 +385,6 @@ function renderDice(){
   s+='<div style="margin-top:6px;color:var(--c-text-faint);font-size:var(--fs-xs)">她永远说了算。反抗只能换四种东西之一：今晚不做 ／ 她自己动手 ／ 把话说破逼她收手 ／ 换一次谈判。一次一种，一轮一次。</div>';
   if(hjq.后门已发现) s+='<div class="thought">她的弱点（'+esc(hjq.后门类型||"")+'）：'+esc(hjq.后门描述||"（尚未写清）")+"</div>";
   if(last&&last.行为) s+=renderVerdict(last);
-  if(hist.length){
-    s+='<div class="hist"><details><summary>判定历史（'+hist.length+" 条）</summary>";
-    hist.slice(-10).reverse().forEach(function(h){
-      s+='<div class="h">Day'+num(h.日)+" "+String(num(h.时)).padStart(2,"0")+":00 · "+esc(h.行为)+" · <b>"+esc(h.综合)+"</b>"+(num(h.警觉)?" · 警觉+"+num(h.警觉):"")+(h.察觉?" · "+esc(h.察觉):"")+"</div>";
-    });
-    s+="</details></div>";
-  }else{
-    s+='<div class="empty">还没有判定记录。点上面任一行为，骰子当场跑完并写进变量，交给 AI 叙事。</div>';
-  }
   return s+"</div></div>";
 }
 function renderVerdict(v){
@@ -431,11 +422,11 @@ async function doRoll(skill){
   try{
     var p=g("玩家",{}), h=g("郝佳期",{}), m=g("元数据",{});
     var day=num(m.日数,1), hour=num(m.小时,0), turn=num(m.回合,0);
-    var order=["洞察","冥想","伪装","意志","调查","拒绝","后门反抗"];
+    var order=["观察","行动","意志","拒绝","后门反抗"];
     var idx=Math.max(1,order.indexOf(skill)+1);
     var base=day*1000000+hour*10000+turn*100+idx*10;
     var isBack=(skill==="后门反抗");
-    var 技=isBack?num((p.技能||{}).调查,0):num((p.技能||{})[skill],0);
+    var 技=isBack?num((p.技能||{}).观察,0):num((p.技能||{})[skill],0);
     var pExp=num((p.心理||{}).兴奋,0), pWill=num((p.技能||{}).意志,0), pSan=num((p.心理||{}).理智,90), pDes=num((p.心理||{}).欲望,0);
     var hBrain=num((h.心理||{}).理智,100), hCou=num((h.心理||{}).勇气,50), hObs=num((h.心理||{}).痴迷,0), hExp=num((h.心理||{}).兴奋,0), hTrust=num((h.关系||{}).信任度,60);
     var hBack=num(h.后门进度,0);
@@ -465,9 +456,6 @@ async function doRoll(skill){
     var ok=await writeStat(function(box){
       box.玩家=box.玩家||{};
       box.玩家.警觉度=Math.min(100,Math.max(0,num(box.玩家.警觉度,0)+警觉));
-      var _h=String(box.玩家.D20历史||"").split("；").filter(Boolean);
-      _h.push(rec);
-      box.玩家.D20历史=_h.slice(-10).join("；");
       box.玩家._本轮判定={行为:skill,投掷:rolls,综合:综合,警觉:警觉,说明:说明};
       if(backOk){
         box.郝佳期=box.郝佳期||{}; box.郝佳期.心理=box.郝佳期.心理||{};
