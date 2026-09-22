@@ -99,6 +99,12 @@ button.opt.picked{border-color:var(--c-primary-strong);background:var(--c-btn-ac
 button.opt b{color:var(--c-primary-strong);margin-right:5px}
 button.opt small{display:block;margin-top:3px;font-size:var(--fs-xs);color:var(--c-text-faint);font-weight:400}
 button.act:disabled{opacity:.45;cursor:not-allowed}
+.opt-btns{display:flex;gap:6px;margin-top:7px}
+.opt-btns button{flex:1;padding:6px 8px;border-radius:7px;border:1px solid var(--c-border);background:var(--c-btn);color:var(--c-text);font-family:var(--font);font-size:var(--fs-xs);cursor:pointer;transition:.15s}
+.opt-btns button:hover{background:var(--c-btn-hover)}
+.opt-btns button:last-child{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.14)}
+button.opt{display:block;width:100%;text-align:left;padding:9px 10px;border-radius:9px;border:1px solid var(--c-border);background:var(--c-surface);color:var(--c-text);font-family:var(--font);font-size:var(--fs-sm);line-height:1.55}
+button.opt.picked{border-color:var(--c-primary-strong);box-shadow:inset 0 0 0 1px var(--c-primary-strong)}
 .verdict{margin:8px 0 0;padding:8px;border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);font-size:var(--fs-sm);line-height:1.6}
 .verdict .big{font-size:var(--fs-md);font-weight:700}
 .rounds{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
@@ -391,19 +397,23 @@ function renderDice(){
   /* ══ 她这一关摆出来的（AI 写进 局面.当前选项，这里只渲染，不解析数据）══ */
   var 局=g("局面",{}), 选项=局.当前选项||{};
   if(!S.pick){ var _pk=String(局.她已选||""); if(_pk && String((选项[_pk]||{}).文本||"").trim()) S.pick=_pk; }
-  if(!S.pick){ var _pk=String(局.她已选||""); if(_pk && String((选项[_pk]||{}).文本||"").trim()) S.pick=_pk; }
   var 格=["一","二","三","四"].filter(function(k){return String((选项[k]||{}).文本||"").trim();});
+  var 她选=String(局.她已选||"");
   if(格.length){
-    var 她选=String(局.她已选||"");
-    s+='<div class="opt-head">她这一关摆出来的（点一条选中）'+(她选?"　★ 她挑的是第 "+她选+" 条":"")+'</div><div class="opts">';
+    s+='<div class="opt-head">她这一关摆出来的'+(她选?"　★ 她挑的是第 "+她选+" 条":"")+'<br>每条都有自己的技能与 DC ——「顺着」＝照做并推进，「拒」＝用意志硬拦。点了就直接判、直接推进下一轮。</div><div class="opts">';
     格.forEach(function(k){
       var o=选项[k]||{};
-      s+='<button class="opt'+(S.pick===k?" picked":"")+'" data-act="pick" data-k="'+k+'"><b>'+k+'</b>'+esc(o.文本)+'<small>'+esc(o.等级||"微")+(o.代价?" · 代价："+esc(o.代价):"")+'</small></button>';
+      var 技=String(o.技能||"行动"), dc=(DC表[String(o.等级||"微")]||12);
+      s+='<div class="opt'+(她选===k?" picked":"")+'">'
+        +'<b>'+k+'</b>'+esc(o.文本)
+        +'<small>等级 '+esc(o.等级||"微")+' · 拦它用 <b>'+esc(技)+'</b>（DC'+dc+'）'+(o.代价?" · 代价："+esc(o.代价):"")+'</small>'
+        +'<div class="opt-btns">'
+        +'<button data-act="do" data-k="'+k+'">顺着</button>'
+        +'<button data-act="no" data-k="'+k+'">拒</button>'
+        +'</div></div>';
     });
     s+='</div>';
-    s+='<div class="acts">'
-      +'<button class="act" data-act="exec"'+(S.pick?"":" disabled")+'>看着（不拦）'+(S.pick?"·"+S.pick:"·先选一条")+'</button>'
-      +'<button class="act refuse" data-act="refuse"'+(S.pick?"":" disabled")+'>拒绝这条'+(S.pick?"·"+S.pick:"·先选一条")+'</button></div>';
+    s+='<div class="acts"><button class="act" data-act="watch">我不动，就看着她</button></div>';
   }else{
     s+='<div class="opt-head">这一关她还没摆选项 —— 等她先出手（她会写进 局面.当前选项 的四格）。</div>';
   }
@@ -411,7 +421,6 @@ function renderDice(){
   Object.keys(SKILLS).forEach(function(nm){
     s+='<button class="act" data-act="roll" data-skill="'+nm+'">'+nm+"<small>DC"+SKILLS[nm].dc+" · 技能"+num((p.技能||{})[nm],0)+"</small></button>";
   });
-  s+='<button class="act refuse" data-act="roll" data-skill="拒绝">拒绝<small>DC12 · 意志'+num((p.技能||{}).意志,0)+"</small></button>";
   var hjq=g("郝佳期",{}), hbk=num(hjq.后门进度,0);
   if(hjq.后门已发现&&hbk>=60){
     s+='<button class="act'+(hjq.后门已利用?"":" refuse")+'" data-act="roll" data-skill="后门反抗">后门反抗<small>DC15 · 进度'+Math.round(hbk)+(hbk>=80?" · 可动用":" · 待满80")+"</small></button>";
@@ -470,33 +479,42 @@ async function 推给AI(要发){
   }catch(e){ console.error("[欲妈群] 推送失败",e); S.source="推送失败"; return false; }
 }
 
-/* 执行 / 拒绝她摆的那一条：判定 → 写变量 → 推给 AI */
-async function 执行选项(模式){
+/* ══ 点了选项就直接走完：判定 → 写变量 → 推给 AI → 下一轮 ══
+   模式 do = 顺着（用这一格自己的技能）｜no = 拒（用意志硬拦） */
+async function 做选项(模式, k){
   if(S.busy) return;
-  var k=S.pick;
-  if(!k){ S.source="先选一条"; render(); return; }
   var 局=g("局面",{}), o=((局.当前选项||{})[k])||{};
   var 文本=String(o.文本||"").trim();
-  if(!文本){ S.source="这一条是空的"; render(); return; }
+  if(!文本){ S.source="这一格是空的"; render(); return; }
   var 等级=String(o.等级||"微");
-  var dcMap={微:12,中:15,强:18,极:22};
-  var skill=(模式==="refuse")?"意志":"行动";
-  var 头=(模式==="refuse")
+  var 技=(模式==="no")?"意志":String(o.技能||"行动");
+  var dc=(模式==="no")?12:(DC表[等级]||12);
+  var 头=(模式==="no")
     ? "【我这轮的动作】我拒绝她摆的第"+k+"条：「"+文本+"」。"
-    : "【我这轮的动作】她摆的第"+k+"条：「"+文本+"」（"+等级+"级）。我按了执行。";
-  await doRoll(skill, 头, dcMap[等级]||12);
-  /* 处理过的这一格清空；执行则记下她已选 */
+    : "【我这轮的动作】她摆的第"+k+"条：「"+文本+"」（"+等级+"级），我顺着做了。";
+  await doRoll(技, 头, dc);
   try{
     await writeStat(function(box){
       box.局面=box.局面||{}; box.局面.当前选项=box.局面.当前选项||{};
-      box.局面.当前选项[k]={文本:"",等级:"微",代价:""};
-      if(模式==="exec") box.局面.她已选=k;
+      box.局面.当前选项[k]={文本:"",等级:"微",代价:"",技能:"行动"};
+      if(模式==="do") box.局面.她已选=k;
     });
   }catch(e){ console.warn("[欲妈群] 清格子失败",e); }
   S.pick="";
   await refresh(false);
 }
 
+/* 我不动，就看着她 —— 不判定，直接把这句话推给 AI */
+async function 看着她(){
+  if(S.busy) return; S.busy=true; render();
+  try{
+    var 局=g("局面",{}), k=String(局.她已选||"");
+    var o=((局.当前选项||{})[k])||{};
+    var 文本=String(o.文本||"").trim()||"她这一关摆出来的那件事";
+    await 推给AI("【我这轮的动作】我什么都没做，就看着她。「"+文本+"」\n★ 按她这一条往下写，不要自己另掷骰、不要改数值。");
+  }catch(e){ console.warn("[欲妈群] 看着她 失败",e); }
+  finally{ S.busy=false; render(); }
+}
 async function doRoll(skill, 追发, 强制dc){
   if(S.busy) return; S.busy=true; render();
   try{
@@ -513,6 +531,7 @@ async function doRoll(skill, 追发, 强制dc){
     /* ══ 三档难度参数（2026-09-22；脚本 _work/check/_diff_search*.mjs）══
        目标：普通=势均力敌（60/75/90）｜困难=他慢慢占上风但一直被压（35/52/73）｜地狱=她绝对压制
        dk=DC 系数｜D=三轮修正｜gw=他的成长权重｜hk=她的增益 */
+    var DC表={"微":12,"中":15,"强":18,"极":22};
     var DIFF={"普通":{dk:0.20,D: 0,gw:0.5,hk:0.6},
               "困难":{dk:0.25,D:-2,gw:0.7,hk:0.8},
               "地狱":{dk:0.30,D:-4,gw:0.4,hk:0.8}};
@@ -610,9 +629,9 @@ document.addEventListener("click",function(ev){
   var act=el.getAttribute("data-act");
   if(act==="refresh") refresh(true);
   else if(act==="roll") doRoll(el.getAttribute("data-skill"));
-  else if(act==="pick"){ S.pick=(S.pick===el.getAttribute("data-k"))?"":el.getAttribute("data-k"); render(); }
-  else if(act==="exec") 执行选项("exec");
-  else if(act==="refuse") 执行选项("refuse");
+  else if(act==="do") 做选项("do", el.getAttribute("data-k"));
+  else if(act==="no") 做选项("no", el.getAttribute("data-k"));
+  else if(act==="watch") 看着她();
   else if(act==="theme"){ S.theme=el.getAttribute("data-val"); applyTheme(); render(); setVar("设置.主题",S.theme); }
 },false);
 function applyTheme(){
