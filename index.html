@@ -510,17 +510,31 @@ async function doRoll(skill, 追发, 强制dc){
     var pExp=num((p.心理||{}).兴奋,0), pWill=num((p.技能||{}).意志,0), pSan=num((p.心理||{}).理智,90), pDes=num((p.心理||{}).欲望,0);
     var hBrain=num((h.心理||{}).理智,100), hCou=num((h.心理||{}).勇气,50), hObs=num((h.心理||{}).痴迷,0), hExp=num((h.心理||{}).兴奋,0), hTrust=num((h.关系||{}).信任度,60);
     var hBack=num(h.后门进度,0);
-    var dc=(强制dc||(SKILLS[skill]?SKILLS[skill].dc:(isBack?15:12)));
-    var m1=Math.round(hCou/10)-Math.round(pExp/20)-Math.round(hBrain/20);
+    /* ══ 三档难度参数（2026-09-22 按目标曲线搜出来，脚本见 _work/check/_diff_search*.mjs）══
+       目标：普通=势均力敌（开局60/中期75/后期90）｜困难=他慢慢占上风（35/65/95）｜地狱=她绝对压制（全程低）
+       实测：普通 59.8/77.0/91.2 ✓｜困难 35.3/73.5/85.8｜地狱 1.0/10.3/26.0
+       dk=DC 系数｜D=三轮修正｜gw=他的成长权重（他练得值不值）｜hk=她的增益（她有多压） */
+    var DIFF={"普通":{dk:0.75,D: 2,gw:0.4,hk:0.5},
+              "困难":{dk:1.35,D:-2,gw:1.0,hk:1.3},
+              "地狱":{dk:1.55,D:-9,gw:0.1,hk:1.2}};
+    var df=DIFF[String(g("元数据",{}).难度||"普通")]||DIFF["困难"];
+    var dc=Math.round((强制dc||(SKILLS[skill]?SKILLS[skill].dc:(isBack?15:12)))*df.dk);
+    var 他观察=num((p.技能||{}).观察,10), 他意志=num((p.技能||{}).意志,15);
     var willFix=(skill==="拒绝"||skill==="意志")?Math.round((pSan-pDes)/10):0;
     var backFix=isBack?Math.round(hBack/10):0;
-    var m2=Math.round(技/5)+Math.round(hObs/10)-dc+willFix+backFix;
-    var m3=Math.round(hExp/10)+Math.round(hCou/20)-Math.round(pWill/5)-Math.round(hTrust/10)-(isBack?Math.round(hBack/20):0);
+    var m1=Math.round((hCou*df.hk-他观察*df.gw)/12)+df.D;
+    var m2=Math.round((技*df.gw-dc)/2)+Math.round(hObs*df.hk/20)+willFix+backFix+df.D;
+    var m3=Math.round((hExp*df.hk-他意志*df.gw)/12)+df.D-(isBack?Math.round(hBack/20):0);
+    /* ══ 聚合（2026-09-22 改）：主档取三轮 (投掷+修正) 的中位；
+       只有三轮全差才大失败、三轮全好才大成功。
+       旧规则 bad≥2→大失败 会让大失败占 75%（而大失败=警觉+15，两次就爆表），
+       且「成功」这一档永不出现（5 档退化 4 档）。 */
     var rolls=[rollAt(base,1),rollAt(base,2),rollAt(base,3)], mods=[m1,m2,m3], grades=[];
-    for(var i=0;i<3;i++) grades.push(grade(rolls[i]+mods[i]));
-    var bad=grades.filter(function(x){return x==="大失败"||x==="失败"}).length;
-    var good=grades.filter(function(x){return x==="大成功"||x==="成功"}).length;
-    var 综合=(bad>=2)?"大失败":((good>=2)?"大成功":grades[1]);
+    var _v=[rolls[0]+m1,rolls[1]+m2,rolls[2]+m3];
+    for(var i=0;i<3;i++) grades.push(grade(_v[i]));
+    var _s=_v.slice().sort(function(x,y){return x-y;});
+    var _allBad=_v.every(function(x){return x<=10;}), _allGood=_v.every(function(x){return x>=16;});
+    var 综合=_allBad?"大失败":(_allGood?"大成功":grade(_s[1]));
     var backOk=isBack&&(综合==="成功"||综合==="大成功")&&hBack>=80;
     var 警觉=isBack?(backOk?-(5+((day*13+turn*7)%11)):(DELTA[综合]||0)):(DELTA[综合]||0);
     var _ev="";
@@ -539,7 +553,7 @@ async function doRoll(skill, 追发, 强制dc){
       box.玩家._本轮判定={行为:skill,投掷:rolls,综合:综合,警觉:警觉,说明:说明};
       /* ★ 技能成长也走面板（AI 不碰）：大成功 +3 ／ 成功 +2 ／ 其余 +1，上限 100 */
       if(skill==="观察"||skill==="行动"||skill==="意志"){
-        var _g=(综合==="大成功"?3:(综合==="成功"?2:1));
+        var _g=(综合==="大成功"?5:(综合==="成功"?3:2));   /* 2026-09-22：+1~3 太慢（17 天到不了 40）→ +2~5 */
         box.玩家.技能=box.玩家.技能||{};
         box.玩家.技能[skill]=Math.min(100,num(box.玩家.技能[skill],0)+_g);
       }
