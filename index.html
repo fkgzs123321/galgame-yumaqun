@@ -251,8 +251,21 @@ function g(p,d){ return _.get(S.stat,p,d); }
 /* ★ 取难度（2026-09-22）：优先读 stat_data.元数据.难度；读不到就读 chat 层的 欲妈群难度 兜底
    —— 因为开局表单在第 0 楼写、而面板读最新楼层，一旦有后续楼层就可能读不到。 */
 function 取难度(){
-  /* ★ 难度权威在 stat_data（15 个开局各带 initvar，切 swipe 时由 MVU 写进去）。
-     chat 层只作旧版兜底（早期版本写在那里）。 */
+  /* ★★ 权威来源 = 开场白楼层的 swipe_id（15 开局方案的地基）：
+       0~4 普通 ／ 5~9 困难 ／ 10~14 地狱。
+     为什么不用变量：initvar_override 只在「该楼层首次初始化」时应用，
+     切 swipe 后 MVU 未必重新读它 —— 会出现切到地狱、面板还显示普通。 */
+  try{
+    if(typeof getChatMessages==="function"){
+      var _ms=getChatMessages([0]);
+      var _sid=Number(_ms&&_ms[0]?_ms[0].swipe_id:0);
+      if(isFinite(_sid)&&_sid>=0){
+        var _档=["普通","普通","普通","普通","普通","困难","困难","困难","困难","困难","地狱","地狱","地狱","地狱","地狱"];
+        if(_档[_sid]) return _档[_sid];
+      }
+    }
+  }catch(e){ console.warn("[欲妈群] 读 swipe_id 失败",e); }
+  /* 兜底：变量（initvar 生效时它是对的） */
   var a=String((g("元数据",{})||{}).难度||"");
   if(难度档 && 难度档[a]) return a;
   try{ if(typeof getVariables==="function"){ var c=getVariables({type:/chat/})||{}; var b=String(c.欲妈群难度||""); if(难度档[b]) return b; } }catch(e){}
