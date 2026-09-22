@@ -224,22 +224,26 @@ function readStat(){
   }catch(e){ console.warn("[欲妈群] getVariables 失败",e); }
   return null;
 }
-async function writeStat(mut){
+/* ★ 同步双写（照 旮旯给木-同级生2 的 set()）：updateVariablesWith 不 await，message + chat 各写一遍。
+   原来用 await Mvu.getMvuData / Mvu.replaceMvuData —— 那两个是 async，一旦不 resolve 就永远卡住。 */
+function writeStat(mut){
   var id=(S.msgId!=null)?S.msgId:lastMsgId();
-  if(id==null) return false;
-  var data=null;
-  if(window.Mvu&&Mvu.getMvuData) data=await Mvu.getMvuData({type:"message",message_id:id});
-  if(!data&&typeof getVariables==="function") data=getVariables({type:"message",message_id:id});
-  if(!data) return false;
-  var box=data.stat_data?data.stat_data:(data.元数据?data:null);
-  if(!box) return false;
-  mut(box);
-  try{
-    if(window.Mvu&&Mvu.replaceMvuData){ await Mvu.replaceMvuData(data,{type:"message",message_id:id}); }
-    else if(typeof replaceVariables==="function"){ await replaceVariables(data,{type:"message",message_id:id}); }
-    else return false;
-    return true;
-  }catch(e){ console.warn("[欲妈群] 写入失败",e); return false; }
+  var ok=false;
+  function 跑(opt){
+    try{
+      if(typeof updateVariablesWith!=="function") return false;
+      updateVariablesWith(function(x){
+        x=x||{};
+        if(!x.stat_data) x.stat_data={};
+        mut(x.stat_data);
+        return x;
+      }, opt);
+      return true;
+    }catch(e){ console.warn("[欲妈群] 写入失败",e); return false; }
+  }
+  if(id!=null) ok = 跑({type:/message/, message_id:id}) || ok;
+  ok = 跑({type:/chat/}) || ok;
+  return ok;
 }
 
 /* ====== 工具 ====== */
