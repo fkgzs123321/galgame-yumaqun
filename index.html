@@ -162,15 +162,17 @@ var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",busy:fals
 var UID_ORDER=["hao_jiaqi","su_mei","lin_wanqing","su_qing","han_xue","bai_lu","tao_tao","lian_nai","you_zi","xiao_ye","qin_yu","ling"];
 var SKILLS={观察:{dc:12},行动:{dc:10},意志:{dc:12}};
 
-/* ★ 难度乘必须定义在全局：取难度() 要查它校验难度名是否合法 */
+/* ★ 难度档必须定义在全局：取难度() 要查它校验难度名是否合法 */
 /* ══ E3 判定的契约参数（机制层规范 · 引擎模板/引擎能力/判定引擎.txt）══
    D = P − R ；S = clamp(50 + D, 5, 95) ；V = LCG×100，V < S 成功 ；档位 = judgeTier(D, 成败)
    ★ 难度用【乘法】不用加法（引擎规范明写：无论基准值多高，难度感受一致）
    ★ S 夹在 5~95：永远不会 0%（留一线）也永远不会有 100%（不出现必胜僵局） */
-var 基础要求={"微":15,"中":35,"强":45,"极":55};
-var 难度乘={"普通":0.55,"困难":0.95,"地狱":1.35};
-var 她强度权重=0.15;                       // R = 基础要求 × 难度乘 × (1 + 她强度/100 × 此值)
-var 阶修表={"1":0,"2":4,"3":9,"4":15,"5":24};   // 阶段修正加在【她的要求】上，不是扣他的分
+var 基础要求={"微":5,"中":10,"强":20,"极":35};   // 她这一关的底（小 —— 她起步时要求本来就不高）
+/* ★ 三档 = 她怎么玩你：基=她要求的倍数（乘法难度）｜强=她强度进要求的比重｜阶=她进阶的加成 */
+var 难度档={"普通":{基:0.30,强:0.62,阶:1.43},
+            "困难":{基:2.80,强:0.29,阶:0.87},
+            "地狱":{基:4.80,强:1.00,阶:0.53}};
+var 阶修表={"1":0,"2":4,"3":9,"4":15,"5":24};     // 阶段修正加在【她的要求】上，不是扣他的分
 var 权重表={"识破":[3,1,1], "拦住":[1,3,1], "扛住":[1,1,3], "全场":[1,1,1]};
 var 她项表={"识破":"勇气", "拦住":"痴迷", "扛住":"兴奋", "全场":""};
 /* 档位：由【差值 + 成败】联合决定（引擎规范里修掉的 bug① 就是"分档与成败不同源"） */
@@ -246,8 +248,8 @@ function g(p,d){ return _.get(S.stat,p,d); }
    —— 因为开局表单在第 0 楼写、而面板读最新楼层，一旦有后续楼层就可能读不到。 */
 function 取难度(){
   var a=String((g("元数据",{})||{}).难度||"");
-  if(难度乘 && 难度乘[a]) return a;
-  try{ if(typeof getVariables==="function"){ var c=getVariables({type:/chat/})||{}; var b=String(c.欲妈群难度||""); if(难度乘[b]) return b; } }catch(e){}
+  if(难度档 && 难度档[a]) return a;
+  try{ if(typeof getVariables==="function"){ var c=getVariables({type:/chat/})||{}; var b=String(c.欲妈群难度||""); if(难度档[b]) return b; } }catch(e){}
   return "普通";
 }
 function num(v,d){ var n=Number(v); return isFinite(n)?n:(d||0); }
@@ -647,12 +649,13 @@ async function doRoll(skill, 追发, 强制dc, 主对){
     var P3=(他意志*3+Math.round(hBack)*1)/4;
     var _w=权重表[String(主对||"拦住")]||权重表["拦住"];
     var P=(P1*_w[0]+P2*_w[1]+P3*_w[2])/(_w[0]+_w[1]+_w[2]);
-    /* ② 要求值 R：基础要求 × 难度乘 × (1 + 她强度) + 阶段修正 */
+    /* ② 要求值 R：基础要求 × 档基(乘法难度) × (1 + 她强度/100 × 档强) + 阶修 × 档阶 */
     var _她项=她项表[String(主对||"拦住")]||"";
     var 她强度=_她项?num(h[_她项],0):Math.round((num(h.勇气,50)+num(h.痴迷,0)+num(h.兴奋,0))/3);
     var 她阶段=Math.min(5,Math.max(1,num(h.阶段,1)));
-    var 基R=(强制dc!==undefined&&强制dc!==null)?强制dc:(dc||基础要求[String(等级||"中")]||35);
-    var R=Math.max(0,Math.min(100,Math.round(基R*难度乘[难度名]*(1+她强度/100*她强度权重)+num(阶修表[String(她阶段)],0))));
+    var 档=难度档[难度名]||难度档["困难"];
+    var 基R=(强制dc!==undefined&&强制dc!==null)?强制dc:(dc||基础要求[String(等级||"中")]||10);
+    var R=Math.max(0,Math.min(100,Math.round(基R*档.基*(1+她强度/100*档.强)+num(阶修表[String(她阶段)],0)*档.阶)));
     /* ③ 差值 / 成功率 / 掷值 / 档位 */
     var D=Math.round((P-R)*100)/100;
     var S=Math.max(5,Math.min(95,Math.round(50+D)));
