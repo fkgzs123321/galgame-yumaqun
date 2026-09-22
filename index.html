@@ -125,10 +125,31 @@ button.opt.picked{border-color:var(--c-primary-strong);box-shadow:inset 0 0 0 1p
 @keyframes sp{to{transform:rotate(360deg)}}
 .empty{padding:8px;color:var(--c-text-faint);font-size:var(--fs-sm);text-align:center}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
-<div class="wrap" id="root"><div class="empty">状态栏加载中…</div></div>
+<div class="wrap" id="root">
+<div class="card"><div class="card-hd"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3a4 4 0 100 8 4 4 0 000-8zm0 10c-4 0-7 2.2-7 5v3h14v-3c0-2.8-3-5-7-5z"/></svg><span>欲妈群</span><span class="tag">v3</span><button class="hd-btn" data-act="refresh">✦</button></div><div class="card-bd"><div class="row"><span class="k">时间</span><span class="v">Day {{format_message_variable::stat_data.元数据.日数}} · {{format_message_variable::stat_data.元数据.时段}} <span id="d-hour">{{format_message_variable::stat_data.元数据.小时}}</span>:00 · 回合{{format_message_variable::stat_data.元数据.回合}}</span></div><div class="row"><span class="k">距高考</span><span class="bar"><i id="d-exam-bar" style="width:{{format_message_variable::stat_data.元数据.日数}}%;background:var(--c-info)"></i></span><span class="v" id="d-remain">— 天</span></div><div class="row"><span class="k">难度</span><span class="v"><span class="pill" id="d-diff">普通</span></span></div><div class="row" id="d-ending" hidden><span class="k">结局</span><span class="v"><span class="pill danger" id="d-ending-t">—</span></span></div></div></div>
+<div class="card"><div class="card-hd"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3a4 4 0 100 8 4 4 0 000-8zm0 10c-4 0-7 2.2-7 5v3h14v-3c0-2.8-3-5-7-5z"/></svg><span>他</span><span class="tag">{{format_message_variable::stat_data.玩家.学校}}</span><button class="hd-btn" data-act="refresh">✦</button></div><div class="card-bd"><div class="lab"><span style="flex:0 0 52px">成绩</span><span class="bar"><i style="width:{{format_message_variable::stat_data.玩家.学业.成绩}}%;background:var(--c-info)"></i><span class="mk" style="left:60%"></span><span class="mk" style="left:80%"></span></span><b>{{format_message_variable::stat_data.玩家.学业.成绩}}</b></div><div class="lab"><span style="flex:0 0 52px">欲望</span><span class="bar"><i style="width:{{format_message_variable::stat_data.玩家.心理.欲望}}%;background:var(--c-primary-strong)"></i><span class="mk" style="left:60%"></span><span class="mk" style="left:80%"></span></span><b>{{format_message_variable::stat_data.玩家.心理.欲望}}</b></div><div class="lab"><span style="flex:0 0 52px">理智</span><span class="bar"><i style="width:{{format_message_variable::stat_data.玩家.心理.理智}}%;background:var(--c-safe)"></i></span><b>{{format_message_variable::stat_data.玩家.心理.理智}}</b></div><div class="lab"><span style="flex:0 0 52px">警觉度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.玩家.警觉度}}%;background:var(--c-warn)"></i><span class="mk" style="left:31%"></span><span class="mk" style="left:61%"></span><span class="mk" style="left:81%"></span></span><b>{{format_message_variable::stat_data.玩家.警觉度}}</b></div><div class="g2" style="margin-top:6px"><div class="row"><span class="k">体力</span><span class="v">{{format_message_variable::stat_data.玩家.身体.体力}}</span></div><div class="row"><span class="k">性欲</span><span class="v">{{format_message_variable::stat_data.玩家.身体.性欲}}</span></div><div class="row"><span class="k">今日</span><span class="v">射精{{format_message_variable::stat_data.玩家.今日.射精次数}} · 幻触{{format_message_variable::stat_data.玩家.今日.幻触次数}}</span></div><div class="row"><span class="k">怀疑</span><span class="v">{{format_message_variable::stat_data.玩家.心理.怀疑}}</span></div></div><div class="g3" style="margin-top:6px"><div class="lab"><span style="flex:0 0 52px">真相</span><span class="bar"><i style="width:{{format_message_variable::stat_data.玩家.察觉值.假阳具真相}}%;background:var(--c-love)"></i><span class="mk" style="left:60%"></span><span class="mk" style="left:80%"></span></span><b>{{format_message_variable::stat_data.玩家.察觉值.假阳具真相}}</b></div><div class="lab"><span style="flex:0 0 52px">群存在</span><span class="bar"><i style="width:{{format_message_variable::stat_data.玩家.察觉值.群存在}}%;background:var(--c-love)"></i><span class="mk" style="left:50%"></span><span class="mk" style="left:60%"></span></span><b>{{format_message_variable::stat_data.玩家.察觉值.群存在}}</b></div><div class="lab"><span style="flex:0 0 52px">母亲欲望</span><span class="bar"><i style="width:{{format_message_variable::stat_data.玩家.察觉值.母亲欲望}}%;background:var(--c-love)"></i><span class="mk" style="left:50%"></span><span class="mk" style="left:70%"></span></span><b>{{format_message_variable::stat_data.玩家.察觉值.母亲欲望}}</b></div><div class="lab"><span style="flex:0 0 52px">幻触</span><span class="bar"><i style="width:{{format_message_variable::stat_data.玩家.察觉值.幻触}}%;background:var(--c-love)"></i><span class="mk" style="left:30%"></span><span class="mk" style="left:50%"></span></span><b>{{format_message_variable::stat_data.玩家.察觉值.幻触}}</b></div></div><div class="row" id="d-himv" hidden><span class="k">本轮判定</span><span class="v" style="font-weight:400"><span class="pill" id="d-himv-act">{{format_message_variable::stat_data.玩家._本轮判定.行为}}</span><span class="pill" id="d-himv-tier">{{format_message_variable::stat_data.玩家._本轮判定.综合}}</span> <span id="d-himv-desc">{{format_message_variable::stat_data.玩家._本轮判定.说明}}</span></span></div><div class="row" id="d-ev" hidden><span class="k">证据</span><span class="v" style="font-weight:400" id="d-ev-t"></span></div></div></div>
+<div class="card"><div class="card-hd"><svg class="ico" viewBox="0 0 24 24"><path d="M12 2l2 5 5 2-5 2-2 5-2-5-5-2 5-2zM5 17l1 2 2 1-2 1-1 2-1-2-2-1 2-1z"/></svg><span>郝佳期</span><span class="tag">Lv.{{format_message_variable::stat_data.郝佳期.群等级}} · 阶段{{format_message_variable::stat_data.郝佳期.阶段}}</span><button class="hd-btn" data-act="refresh">✦</button></div><div class="card-bd"><div class="row"><span class="k">阶段</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.阶段进度}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.郝佳期.阶段}} / 5 · 第<span id="d-mom-days">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.心理.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.郝佳期.心理.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.心理.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.郝佳期.心理.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">理智</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.心理.理智}}%;background:var(--c-info)"></i></span><b>{{format_message_variable::stat_data.郝佳期.心理.理智}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.心理.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.郝佳期.心理.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.心理.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.郝佳期.心理.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.心理.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.郝佳期.心理.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.心理.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.郝佳期.心理.暴露恐惧}}</b></div><div class="lab"><span style="flex:0 0 52px">叛逆恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.关系.叛逆恐惧}}%;background:var(--c-primary)"></i><span class="mk" style="left:40%"></span><span class="mk" style="left:70%"></span></span><b>{{format_message_variable::stat_data.郝佳期.关系.叛逆恐惧}}</b></div></div><div class="row"><span class="k">关系</span><span class="v">亲密{{format_message_variable::stat_data.郝佳期.关系.亲密度}} · 信任{{format_message_variable::stat_data.郝佳期.关系.信任度}} · 边界{{format_message_variable::stat_data.郝佳期.关系.边界}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-mom-line">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.郝佳期.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.郝佳期.后门类型}}</span><span class="pill" id="d-mom-bds">未发现</span><span class="pill danger" id="d-mom-bdu" hidden>已利用</span></span></div><div class="thought" id="d-mom-str" hidden>策略：{{format_message_variable::stat_data.郝佳期.后门策略}}</div><div class="row"><span class="k">统计</span><span class="v" style="font-weight:400">偷抚{{format_message_variable::stat_data.郝佳期.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.郝佳期.统计.诱导射精}} · 假阳具{{format_message_variable::stat_data.郝佳期.统计.假阳具使用}} · 暴露{{format_message_variable::stat_data.郝佳期.统计.暴露次数}}</span></div><div class="row"><span class="k">积分</span><span class="v">{{format_message_variable::stat_data.郝佳期.积分}} ｜ 今日排名 {{format_message_variable::stat_data.郝佳期.竞赛.今日排名}} ｜ 得分 {{format_message_variable::stat_data.郝佳期.竞赛.今日得分}}</span></div><div class="thought" id="d-mom-thk" hidden>{{format_message_variable::stat_data.郝佳期.心理.此刻想法}}</div></div></div>
+<div class="card"><div class="card-hd"><svg class="ico" viewBox="0 0 24 24"><path d="M8 11a3 3 0 100-6 3 3 0 000 6zm8 0a3 3 0 100-6 3 3 0 000 6zM2 20v-1c0-2.2 2.7-4 6-4s6 1.8 6 4v1H2zm13 0v-1c0-1.4-.6-2.6-1.7-3.5 1.1-.3 2.2-.5 3.7-.5 2.2 0 4 1.3 4 3v2h-6z"/></svg><span>欲妈群</span><span class="tag">活跃{{format_message_variable::stat_data.群.活跃度}}% · 在线{{format_message_variable::stat_data.群.在线数}}/{{format_message_variable::stat_data.群.成员数}}</span><button class="hd-btn" data-act="refresh">✦</button></div><div class="card-bd"><div class="row"><span class="k">今日主题</span><span class="v" style="font-weight:400">{{format_message_variable::stat_data.群.今日主题}}</span></div><div class="lab"><span style="flex:0 0 52px">暴露风险</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.暴露风险}}%;background:var(--c-danger)"></i><span class="mk" style="left:31%"></span><span class="mk" style="left:61%"></span><span class="mk" style="left:81%"></span></span><b>{{format_message_variable::stat_data.群.暴露风险}}</b></div><div class="row" id="d-ally" hidden><span class="k">联盟</span><span class="v" style="font-weight:400" id="d-ally-t"></span></div><div class="row" id="d-week" hidden><span class="k">上期结算</span><span class="v" id="d-week-t"></span></div><div class="row" id="d-secret" hidden><span class="k">秘密任务</span><span class="v" style="font-weight:400"><span class="pill warn">进行中</span> {{format_message_variable::stat_data.群.秘密任务.成员}} · {{format_message_variable::stat_data.群.秘密任务.内容}}（Day{{format_message_variable::stat_data.群.秘密任务.期限日}}前）</span></div><div class="row"><span class="k">群周派对</span><span class="v" style="font-weight:400" id="d-party-t"></span></div><div class="members" style="margin-top:8px"><div class="mem" id="d-mem-hao_jiaqi" data-uid="hao_jiaqi"><span class="dot" id="d-dot-hao_jiaqi"></span><div class="nm">郝佳期</div><div class="sub">阶段{{format_message_variable::stat_data.郝佳期.阶段}} · Lv.{{format_message_variable::stat_data.郝佳期.群等级}}</div></div><div class="mem" id="d-mem-su_mei" data-uid="su_mei"><span class="dot" id="d-dot-su_mei"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.su_mei.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.su_mei.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.su_mei.等级}}</div></div><div class="mem" id="d-mem-lin_wanqing" data-uid="lin_wanqing"><span class="dot" id="d-dot-lin_wanqing"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.lin_wanqing.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.lin_wanqing.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.lin_wanqing.等级}}</div></div><div class="mem" id="d-mem-su_qing" data-uid="su_qing"><span class="dot" id="d-dot-su_qing"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.su_qing.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.su_qing.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.su_qing.等级}}</div></div><div class="mem" id="d-mem-han_xue" data-uid="han_xue"><span class="dot" id="d-dot-han_xue"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.han_xue.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.han_xue.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.han_xue.等级}}</div></div><div class="mem" id="d-mem-bai_lu" data-uid="bai_lu"><span class="dot" id="d-dot-bai_lu"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.bai_lu.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.bai_lu.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.bai_lu.等级}}</div></div><div class="mem" id="d-mem-tao_tao" data-uid="tao_tao"><span class="dot" id="d-dot-tao_tao"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.tao_tao.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.tao_tao.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.tao_tao.等级}}</div></div><div class="mem" id="d-mem-lian_nai" data-uid="lian_nai"><span class="dot" id="d-dot-lian_nai"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.lian_nai.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.lian_nai.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.lian_nai.等级}}</div></div><div class="mem" id="d-mem-you_zi" data-uid="you_zi"><span class="dot" id="d-dot-you_zi"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.you_zi.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.you_zi.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.you_zi.等级}}</div></div><div class="mem" id="d-mem-xiao_ye" data-uid="xiao_ye"><span class="dot" id="d-dot-xiao_ye"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.xiao_ye.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.xiao_ye.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.xiao_ye.等级}}</div></div><div class="mem" id="d-mem-qin_yu" data-uid="qin_yu"><span class="dot" id="d-dot-qin_yu"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.qin_yu.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.qin_yu.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.qin_yu.等级}}</div></div><div class="mem" id="d-mem-ling" data-uid="ling"><span class="dot" id="d-dot-ling"></span><div class="nm">{{format_message_variable::stat_data.群.成员详情.ling.姓名}}</div><div class="sub">阶段{{format_message_variable::stat_data.群.成员详情.ling.阶段}} · Lv.{{format_message_variable::stat_data.群.成员详情.ling.等级}}</div></div></div><div class="detail" id="d-det-hao_jiaqi" data-detail="hao_jiaqi"><h4>郝佳期 · 主线</h4><div class="row"><span class="k">绑定</span><span class="v">{{format_message_variable::stat_data.假阳具.绑定目标}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.玩家.察觉值.母亲欲望}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.玩家.察觉值.母亲欲望}}<span class="pill hot" id="d-party-hao_jiaqi" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.郝佳期.阶段}}/5 · 暴露{{format_message_variable::stat_data.玩家.察觉值.母亲欲望}}/100</span></div><div class="row"><span class="k">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.郝佳期.后门进度}}%;background:var(--c-danger)"></i><span class="mk" style="left:60%"></span><span class="mk" style="left:80%"></span></span><span class="v">{{format_message_variable::stat_data.郝佳期.后门进度}}</span></div><div class="row"><span class="k">弱点</span><span class="v"><span class="pill">{{format_message_variable::stat_data.郝佳期.后门类型}}</span><span class="pill" id="d-bds-hao_jiaqi">未发现</span><span class="pill danger" id="d-bdu-hao_jiaqi" hidden>已利用</span></span></div><div class="thought">{{format_message_variable::stat_data.郝佳期.后门描述}}</div><div class="thought">{{format_message_variable::stat_data.郝佳期.心理.此刻想法}}</div></div>
+<div class="detail" id="d-det-su_mei" data-detail="su_mei" hidden><h4>{{format_message_variable::stat_data.群.成员详情.su_mei.姓名}} · {{format_message_variable::stat_data.群.成员详情.su_mei.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.su_mei.儿子名}}<span class="pill hot" id="d-son-su_mei" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-su_mei" style="width:{{format_message_variable::stat_data.群.成员详情.su_mei.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.su_mei.阶段}} / 5 · 第<span id="d-days-su_mei">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_mei.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_mei.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_mei.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_mei.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_mei.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_mei.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_mei.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_mei.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_mei.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_mei.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_mei.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_mei.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.su_mei.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.su_mei.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.su_mei.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.su_mei.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.su_mei.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.su_mei.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.su_mei.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_mei.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.su_mei.暴露度}}<span class="pill hot" id="d-party-su_mei" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.su_mei.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.su_mei.暴露度}}/100</span></div><div class="row" id="d-jz-su_mei" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.su_mei.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-su_mei">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_mei.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_mei.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.su_mei.后门类型}}</span><span class="pill" id="d-bds-su_mei">未发现</span></span></div><div class="thought" id="d-str-su_mei" hidden>策略：{{format_message_variable::stat_data.群.成员详情.su_mei.后门策略}}</div><div class="thought" id="d-thk-su_mei" hidden>{{format_message_variable::stat_data.群.成员详情.su_mei.此刻想法}}</div></div>
+<div class="detail" id="d-det-lin_wanqing" data-detail="lin_wanqing" hidden><h4>{{format_message_variable::stat_data.群.成员详情.lin_wanqing.姓名}} · {{format_message_variable::stat_data.群.成员详情.lin_wanqing.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.lin_wanqing.儿子名}}<span class="pill hot" id="d-son-lin_wanqing" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-lin_wanqing" style="width:{{format_message_variable::stat_data.群.成员详情.lin_wanqing.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.lin_wanqing.阶段}} / 5 · 第<span id="d-days-lin_wanqing">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lin_wanqing.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lin_wanqing.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lin_wanqing.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lin_wanqing.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lin_wanqing.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lin_wanqing.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lin_wanqing.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lin_wanqing.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lin_wanqing.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lin_wanqing.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lin_wanqing.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lin_wanqing.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.lin_wanqing.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.lin_wanqing.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.lin_wanqing.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.lin_wanqing.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.lin_wanqing.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.lin_wanqing.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.lin_wanqing.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lin_wanqing.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.lin_wanqing.暴露度}}<span class="pill hot" id="d-party-lin_wanqing" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.lin_wanqing.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.lin_wanqing.暴露度}}/100</span></div><div class="row" id="d-jz-lin_wanqing" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.lin_wanqing.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-lin_wanqing">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lin_wanqing.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lin_wanqing.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.lin_wanqing.后门类型}}</span><span class="pill" id="d-bds-lin_wanqing">未发现</span></span></div><div class="thought" id="d-str-lin_wanqing" hidden>策略：{{format_message_variable::stat_data.群.成员详情.lin_wanqing.后门策略}}</div><div class="thought" id="d-thk-lin_wanqing" hidden>{{format_message_variable::stat_data.群.成员详情.lin_wanqing.此刻想法}}</div></div>
+<div class="detail" id="d-det-su_qing" data-detail="su_qing" hidden><h4>{{format_message_variable::stat_data.群.成员详情.su_qing.姓名}} · {{format_message_variable::stat_data.群.成员详情.su_qing.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.su_qing.儿子名}}<span class="pill hot" id="d-son-su_qing" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-su_qing" style="width:{{format_message_variable::stat_data.群.成员详情.su_qing.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.su_qing.阶段}} / 5 · 第<span id="d-days-su_qing">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_qing.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_qing.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_qing.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_qing.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_qing.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_qing.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_qing.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_qing.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_qing.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_qing.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_qing.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_qing.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.su_qing.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.su_qing.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.su_qing.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.su_qing.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.su_qing.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.su_qing.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.su_qing.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_qing.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.su_qing.暴露度}}<span class="pill hot" id="d-party-su_qing" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.su_qing.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.su_qing.暴露度}}/100</span></div><div class="row" id="d-jz-su_qing" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.su_qing.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-su_qing">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.su_qing.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.su_qing.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.su_qing.后门类型}}</span><span class="pill" id="d-bds-su_qing">未发现</span></span></div><div class="thought" id="d-str-su_qing" hidden>策略：{{format_message_variable::stat_data.群.成员详情.su_qing.后门策略}}</div><div class="thought" id="d-thk-su_qing" hidden>{{format_message_variable::stat_data.群.成员详情.su_qing.此刻想法}}</div></div>
+<div class="detail" id="d-det-han_xue" data-detail="han_xue" hidden><h4>{{format_message_variable::stat_data.群.成员详情.han_xue.姓名}} · {{format_message_variable::stat_data.群.成员详情.han_xue.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.han_xue.儿子名}}<span class="pill hot" id="d-son-han_xue" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-han_xue" style="width:{{format_message_variable::stat_data.群.成员详情.han_xue.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.han_xue.阶段}} / 5 · 第<span id="d-days-han_xue">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.han_xue.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.han_xue.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.han_xue.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.han_xue.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.han_xue.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.han_xue.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.han_xue.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.han_xue.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.han_xue.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.han_xue.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.han_xue.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.han_xue.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.han_xue.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.han_xue.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.han_xue.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.han_xue.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.han_xue.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.han_xue.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.han_xue.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.han_xue.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.han_xue.暴露度}}<span class="pill hot" id="d-party-han_xue" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.han_xue.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.han_xue.暴露度}}/100</span></div><div class="row" id="d-jz-han_xue" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.han_xue.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-han_xue">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.han_xue.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.han_xue.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.han_xue.后门类型}}</span><span class="pill" id="d-bds-han_xue">未发现</span></span></div><div class="thought" id="d-str-han_xue" hidden>策略：{{format_message_variable::stat_data.群.成员详情.han_xue.后门策略}}</div><div class="thought" id="d-thk-han_xue" hidden>{{format_message_variable::stat_data.群.成员详情.han_xue.此刻想法}}</div></div>
+<div class="detail" id="d-det-bai_lu" data-detail="bai_lu" hidden><h4>{{format_message_variable::stat_data.群.成员详情.bai_lu.姓名}} · {{format_message_variable::stat_data.群.成员详情.bai_lu.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.bai_lu.儿子名}}<span class="pill hot" id="d-son-bai_lu" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-bai_lu" style="width:{{format_message_variable::stat_data.群.成员详情.bai_lu.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.bai_lu.阶段}} / 5 · 第<span id="d-days-bai_lu">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.bai_lu.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.bai_lu.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.bai_lu.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.bai_lu.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.bai_lu.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.bai_lu.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.bai_lu.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.bai_lu.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.bai_lu.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.bai_lu.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.bai_lu.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.bai_lu.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.bai_lu.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.bai_lu.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.bai_lu.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.bai_lu.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.bai_lu.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.bai_lu.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.bai_lu.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.bai_lu.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.bai_lu.暴露度}}<span class="pill hot" id="d-party-bai_lu" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.bai_lu.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.bai_lu.暴露度}}/100</span></div><div class="row" id="d-jz-bai_lu" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.bai_lu.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-bai_lu">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.bai_lu.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.bai_lu.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.bai_lu.后门类型}}</span><span class="pill" id="d-bds-bai_lu">未发现</span></span></div><div class="thought" id="d-str-bai_lu" hidden>策略：{{format_message_variable::stat_data.群.成员详情.bai_lu.后门策略}}</div><div class="thought" id="d-thk-bai_lu" hidden>{{format_message_variable::stat_data.群.成员详情.bai_lu.此刻想法}}</div></div>
+<div class="detail" id="d-det-tao_tao" data-detail="tao_tao" hidden><h4>{{format_message_variable::stat_data.群.成员详情.tao_tao.姓名}} · {{format_message_variable::stat_data.群.成员详情.tao_tao.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.tao_tao.儿子名}}<span class="pill hot" id="d-son-tao_tao" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-tao_tao" style="width:{{format_message_variable::stat_data.群.成员详情.tao_tao.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.tao_tao.阶段}} / 5 · 第<span id="d-days-tao_tao">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.tao_tao.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.tao_tao.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.tao_tao.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.tao_tao.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.tao_tao.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.tao_tao.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.tao_tao.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.tao_tao.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.tao_tao.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.tao_tao.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.tao_tao.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.tao_tao.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.tao_tao.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.tao_tao.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.tao_tao.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.tao_tao.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.tao_tao.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.tao_tao.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.tao_tao.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.tao_tao.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.tao_tao.暴露度}}<span class="pill hot" id="d-party-tao_tao" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.tao_tao.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.tao_tao.暴露度}}/100</span></div><div class="row" id="d-jz-tao_tao" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.tao_tao.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-tao_tao">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.tao_tao.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.tao_tao.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.tao_tao.后门类型}}</span><span class="pill" id="d-bds-tao_tao">未发现</span></span></div><div class="thought" id="d-str-tao_tao" hidden>策略：{{format_message_variable::stat_data.群.成员详情.tao_tao.后门策略}}</div><div class="thought" id="d-thk-tao_tao" hidden>{{format_message_variable::stat_data.群.成员详情.tao_tao.此刻想法}}</div></div>
+<div class="detail" id="d-det-lian_nai" data-detail="lian_nai" hidden><h4>{{format_message_variable::stat_data.群.成员详情.lian_nai.姓名}} · {{format_message_variable::stat_data.群.成员详情.lian_nai.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.lian_nai.儿子名}}<span class="pill hot" id="d-son-lian_nai" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-lian_nai" style="width:{{format_message_variable::stat_data.群.成员详情.lian_nai.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.lian_nai.阶段}} / 5 · 第<span id="d-days-lian_nai">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lian_nai.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lian_nai.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lian_nai.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lian_nai.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lian_nai.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lian_nai.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lian_nai.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lian_nai.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lian_nai.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lian_nai.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lian_nai.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lian_nai.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.lian_nai.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.lian_nai.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.lian_nai.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.lian_nai.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.lian_nai.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.lian_nai.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.lian_nai.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lian_nai.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.lian_nai.暴露度}}<span class="pill hot" id="d-party-lian_nai" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.lian_nai.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.lian_nai.暴露度}}/100</span></div><div class="row" id="d-jz-lian_nai" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.lian_nai.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-lian_nai">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.lian_nai.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.lian_nai.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.lian_nai.后门类型}}</span><span class="pill" id="d-bds-lian_nai">未发现</span></span></div><div class="thought" id="d-str-lian_nai" hidden>策略：{{format_message_variable::stat_data.群.成员详情.lian_nai.后门策略}}</div><div class="thought" id="d-thk-lian_nai" hidden>{{format_message_variable::stat_data.群.成员详情.lian_nai.此刻想法}}</div></div>
+<div class="detail" id="d-det-you_zi" data-detail="you_zi" hidden><h4>{{format_message_variable::stat_data.群.成员详情.you_zi.姓名}} · {{format_message_variable::stat_data.群.成员详情.you_zi.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.you_zi.儿子名}}<span class="pill hot" id="d-son-you_zi" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-you_zi" style="width:{{format_message_variable::stat_data.群.成员详情.you_zi.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.you_zi.阶段}} / 5 · 第<span id="d-days-you_zi">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.you_zi.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.you_zi.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.you_zi.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.you_zi.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.you_zi.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.you_zi.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.you_zi.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.you_zi.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.you_zi.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.you_zi.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.you_zi.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.you_zi.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.you_zi.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.you_zi.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.you_zi.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.you_zi.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.you_zi.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.you_zi.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.you_zi.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.you_zi.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.you_zi.暴露度}}<span class="pill hot" id="d-party-you_zi" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.you_zi.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.you_zi.暴露度}}/100</span></div><div class="row" id="d-jz-you_zi" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.you_zi.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-you_zi">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.you_zi.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.you_zi.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.you_zi.后门类型}}</span><span class="pill" id="d-bds-you_zi">未发现</span></span></div><div class="thought" id="d-str-you_zi" hidden>策略：{{format_message_variable::stat_data.群.成员详情.you_zi.后门策略}}</div><div class="thought" id="d-thk-you_zi" hidden>{{format_message_variable::stat_data.群.成员详情.you_zi.此刻想法}}</div></div>
+<div class="detail" id="d-det-xiao_ye" data-detail="xiao_ye" hidden><h4>{{format_message_variable::stat_data.群.成员详情.xiao_ye.姓名}} · {{format_message_variable::stat_data.群.成员详情.xiao_ye.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.xiao_ye.儿子名}}<span class="pill hot" id="d-son-xiao_ye" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-xiao_ye" style="width:{{format_message_variable::stat_data.群.成员详情.xiao_ye.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.xiao_ye.阶段}} / 5 · 第<span id="d-days-xiao_ye">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.xiao_ye.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.xiao_ye.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.xiao_ye.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.xiao_ye.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.xiao_ye.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.xiao_ye.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.xiao_ye.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.xiao_ye.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.xiao_ye.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.xiao_ye.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.xiao_ye.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.xiao_ye.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.xiao_ye.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.xiao_ye.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.xiao_ye.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.xiao_ye.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.xiao_ye.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.xiao_ye.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.xiao_ye.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.xiao_ye.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.xiao_ye.暴露度}}<span class="pill hot" id="d-party-xiao_ye" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.xiao_ye.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.xiao_ye.暴露度}}/100</span></div><div class="row" id="d-jz-xiao_ye" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.xiao_ye.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-xiao_ye">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.xiao_ye.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.xiao_ye.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.xiao_ye.后门类型}}</span><span class="pill" id="d-bds-xiao_ye">未发现</span></span></div><div class="thought" id="d-str-xiao_ye" hidden>策略：{{format_message_variable::stat_data.群.成员详情.xiao_ye.后门策略}}</div><div class="thought" id="d-thk-xiao_ye" hidden>{{format_message_variable::stat_data.群.成员详情.xiao_ye.此刻想法}}</div></div>
+<div class="detail" id="d-det-qin_yu" data-detail="qin_yu" hidden><h4>{{format_message_variable::stat_data.群.成员详情.qin_yu.姓名}} · {{format_message_variable::stat_data.群.成员详情.qin_yu.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.qin_yu.儿子名}}<span class="pill hot" id="d-son-qin_yu" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-qin_yu" style="width:{{format_message_variable::stat_data.群.成员详情.qin_yu.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.qin_yu.阶段}} / 5 · 第<span id="d-days-qin_yu">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.qin_yu.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.qin_yu.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.qin_yu.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.qin_yu.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.qin_yu.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.qin_yu.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.qin_yu.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.qin_yu.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.qin_yu.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.qin_yu.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.qin_yu.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.qin_yu.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.qin_yu.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.qin_yu.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.qin_yu.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.qin_yu.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.qin_yu.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.qin_yu.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.qin_yu.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.qin_yu.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.qin_yu.暴露度}}<span class="pill hot" id="d-party-qin_yu" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.qin_yu.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.qin_yu.暴露度}}/100</span></div><div class="row" id="d-jz-qin_yu" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.qin_yu.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-qin_yu">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.qin_yu.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.qin_yu.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.qin_yu.后门类型}}</span><span class="pill" id="d-bds-qin_yu">未发现</span></span></div><div class="thought" id="d-str-qin_yu" hidden>策略：{{format_message_variable::stat_data.群.成员详情.qin_yu.后门策略}}</div><div class="thought" id="d-thk-qin_yu" hidden>{{format_message_variable::stat_data.群.成员详情.qin_yu.此刻想法}}</div></div>
+<div class="detail" id="d-det-ling" data-detail="ling" hidden><h4>{{format_message_variable::stat_data.群.成员详情.ling.姓名}} · {{format_message_variable::stat_data.群.成员详情.ling.角色}}</h4><div class="row"><span class="k">儿子</span><span class="v">{{format_message_variable::stat_data.群.成员详情.ling.儿子名}}<span class="pill hot" id="d-son-ling" hidden>在场</span></span></div><div class="row"><span class="k">阶段</span><span class="bar"><i id="d-sbar-ling" style="width:{{format_message_variable::stat_data.群.成员详情.ling.阶段}}%;background:var(--c-primary-strong)"></i></span><span class="v">{{format_message_variable::stat_data.群.成员详情.ling.阶段}} / 5 · 第<span id="d-days-ling">1</span>天</span></div><div class="g2"><div class="lab"><span style="flex:0 0 52px">兴奋</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.ling.兴奋}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.ling.兴奋}}</b></div><div class="lab"><span style="flex:0 0 52px">润滑</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.ling.润滑}}%;background:var(--c-primary)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.ling.润滑}}</b></div><div class="lab"><span style="flex:0 0 52px">罪恶感</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.ling.罪恶感}}%;background:var(--c-love)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.ling.罪恶感}}</b></div><div class="lab"><span style="flex:0 0 52px">痴迷</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.ling.痴迷}}%;background:var(--c-primary-strong)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.ling.痴迷}}</b></div><div class="lab"><span style="flex:0 0 52px">勇气</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.ling.勇气}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.ling.勇气}}</b></div><div class="lab"><span style="flex:0 0 52px">暴露恐惧</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.ling.暴露恐惧}}%;background:var(--c-warn)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.ling.暴露恐惧}}</b></div></div><div class="row"><span class="k">与儿子</span><span class="v">亲密{{format_message_variable::stat_data.群.成员详情.ling.关系.亲密度}} · 信任{{format_message_variable::stat_data.群.成员详情.ling.关系.信任度}} · 边界{{format_message_variable::stat_data.群.成员详情.ling.关系.边界}}</span></div><div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具{{format_message_variable::stat_data.群.成员详情.ling.统计.假阳具使用}} · 偷抚{{format_message_variable::stat_data.群.成员详情.ling.统计.偷抚次数}} · 诱导{{format_message_variable::stat_data.群.成员详情.ling.统计.诱导射精}} · 暴露{{format_message_variable::stat_data.群.成员详情.ling.统计.暴露次数}}</span></div><div class="row"><span class="k">暴露度</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.ling.暴露度}}%;background:var(--c-danger)"></i><span class="mk" style="left:100%"></span></span><span class="v">{{format_message_variable::stat_data.群.成员详情.ling.暴露度}}<span class="pill hot" id="d-party-ling" hidden>群P已达标</span></span></div><div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段{{format_message_variable::stat_data.群.成员详情.ling.阶段}}/5 · 暴露{{format_message_variable::stat_data.群.成员详情.ling.暴露度}}/100</span></div><div class="row" id="d-jz-ling" hidden><span class="k">竞技纪录</span><span class="v">{{format_message_variable::stat_data.群.成员详情.ling.专属.竞技纪录}}</span></div><div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400" id="d-line-ling">—</span></div><div class="lab"><span style="flex:0 0 52px">后门</span><span class="bar"><i style="width:{{format_message_variable::stat_data.群.成员详情.ling.后门进度}}%;background:var(--c-danger)"></i></span><b>{{format_message_variable::stat_data.群.成员详情.ling.后门进度}}</b></div><div class="row"><span class="k">后门</span><span class="v"><span class="pill">{{format_message_variable::stat_data.群.成员详情.ling.后门类型}}</span><span class="pill" id="d-bds-ling">未发现</span></span></div><div class="thought" id="d-str-ling" hidden>策略：{{format_message_variable::stat_data.群.成员详情.ling.后门策略}}</div><div class="thought" id="d-thk-ling" hidden>{{format_message_variable::stat_data.群.成员详情.ling.此刻想法}}</div></div></div></div>
+<div class="card"><div class="card-hd"><svg class="ico" viewBox="0 0 24 24"><path d="M12 2a6 6 0 016 6v5l2 4v3H4v-3l2-4V8a6 6 0 016-6z"/></svg><span>假阳具</span><span class="tag" id="d-toy-state">激活</span><button class="hd-btn" data-act="refresh">✦</button></div><div class="card-bd"><div class="row"><span class="k">持有者</span><span class="v"><span class="pill hot" id="d-toy-holder">—</span>（Day{{format_message_variable::stat_data.假阳具.持有起始日}}~{{format_message_variable::stat_data.假阳具.持有到期日}}）</span></div><div class="row" id="d-toy-borrow" hidden><span class="k">借用中</span><span class="v"><span class="pill warn" id="d-toy-borrower">—</span> 剩 {{format_message_variable::stat_data.假阳具.借用期限}} 周</span></div><div class="row"><span class="k">今日</span><span class="v">{{format_message_variable::stat_data.假阳具.今日使用}} 次 · 上次 {{format_message_variable::stat_data.假阳具.上次使用时}} 时</span></div></div></div>
+<div class="card"><div class="card-hd"><svg class="ico" viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zm3 3a1.6 1.6 0 100 3.2A1.6 1.6 0 008 6zm8 0a1.6 1.6 0 100 3.2A1.6 1.6 0 0016 6zm-8 9a1.6 1.6 0 100 3.2A1.6 1.6 0 008 15zm8 0a1.6 1.6 0 100 3.2A1.6 1.6 0 0016 15zm-4-5a1.6 1.6 0 100 3.2A1.6 1.6 0 0012 10z"/></svg><span>行动判定</span><span class="tag">LCG 确定性骰</span><button class="hd-btn" data-act="refresh">✦</button></div><div class="card-bd"><div class="opt-head" id="d-opt-head" hidden>她这一关摆出来的<span id="d-opt-pick"></span><br>每条都有自己的技能与 DC ——「顺着」＝照做并推进，「拒」＝用意志硬拦。点了就直接判、直接推进下一轮。</div><div class="opt-head" id="d-opt-none">这一关她还没摆选项 —— 等她先出手（她会写进 局面.当前选项 的四格）。</div><div class="opts" id="d-opts"><div class="opt" id="d-opt-一" data-opt="一" hidden><b>一</b>{{format_message_variable::stat_data.局面.当前选项.一.文本}}<small>等级 {{format_message_variable::stat_data.局面.当前选项.一.等级}} · 拦它用 <b>{{format_message_variable::stat_data.局面.当前选项.一.技能}}</b>（DC<span id="d-dc-一">12</span>）· 考验 <b>{{format_message_variable::stat_data.局面.当前选项.一.主对}}</b><span id="d-cost-一"> · 代价：{{format_message_variable::stat_data.局面.当前选项.一.代价}}</span></small><div class="opt-btns"><button data-act="do" data-k="一">顺着</button><button data-act="no" data-k="一">拒</button></div></div><div class="opt" id="d-opt-二" data-opt="二" hidden><b>二</b>{{format_message_variable::stat_data.局面.当前选项.二.文本}}<small>等级 {{format_message_variable::stat_data.局面.当前选项.二.等级}} · 拦它用 <b>{{format_message_variable::stat_data.局面.当前选项.二.技能}}</b>（DC<span id="d-dc-二">12</span>）· 考验 <b>{{format_message_variable::stat_data.局面.当前选项.二.主对}}</b><span id="d-cost-二"> · 代价：{{format_message_variable::stat_data.局面.当前选项.二.代价}}</span></small><div class="opt-btns"><button data-act="do" data-k="二">顺着</button><button data-act="no" data-k="二">拒</button></div></div><div class="opt" id="d-opt-三" data-opt="三" hidden><b>三</b>{{format_message_variable::stat_data.局面.当前选项.三.文本}}<small>等级 {{format_message_variable::stat_data.局面.当前选项.三.等级}} · 拦它用 <b>{{format_message_variable::stat_data.局面.当前选项.三.技能}}</b>（DC<span id="d-dc-三">12</span>）· 考验 <b>{{format_message_variable::stat_data.局面.当前选项.三.主对}}</b><span id="d-cost-三"> · 代价：{{format_message_variable::stat_data.局面.当前选项.三.代价}}</span></small><div class="opt-btns"><button data-act="do" data-k="三">顺着</button><button data-act="no" data-k="三">拒</button></div></div><div class="opt" id="d-opt-四" data-opt="四" hidden><b>四</b>{{format_message_variable::stat_data.局面.当前选项.四.文本}}<small>等级 {{format_message_variable::stat_data.局面.当前选项.四.等级}} · 拦它用 <b>{{format_message_variable::stat_data.局面.当前选项.四.技能}}</b>（DC<span id="d-dc-四">12</span>）· 考验 <b>{{format_message_variable::stat_data.局面.当前选项.四.主对}}</b><span id="d-cost-四"> · 代价：{{format_message_variable::stat_data.局面.当前选项.四.代价}}</span></small><div class="opt-btns"><button data-act="do" data-k="四">顺着</button><button data-act="no" data-k="四">拒</button></div></div></div><div class="acts" id="d-watch" hidden><button class="act" data-act="watch">我不动，就看着她</button></div><div class="res" id="ymq-res" hidden></div><div class="cx"><div class="cx-h">我自己要做别的（写一句你想做的，交给她判）</div><input class="cx-in" id="ymq-cx" placeholder="例：翻身把脸埋进枕头里，装作还在睡" value=""><div class="cx-ready" id="d-cx-ready" hidden>她已经判过：「{{format_message_variable::stat_data.局面.自定义.文本}}」→ 用 <b>{{format_message_variable::stat_data.局面.自定义.技能}}</b>（DC<span id="d-cx-dc">15</span>）· 考验 <b>{{format_message_variable::stat_data.局面.自定义.主对}}</b></div><div class="acts" id="d-cx-roll" hidden><button class="act" data-act="rollcx">掷骰，看看成不成</button><button class="act" data-act="cxcancel">算了，不做了</button></div><div class="acts" id="d-cx-ask"><button class="act" data-act="askcx">交给她判（她会定技能与难度）</button></div></div><div class="acts" style="margin-top:8px"><button class="act" data-act="roll" data-skill="观察">观察<small>DC12 · 技能{{format_message_variable::stat_data.玩家.技能.观察}}</small></button><button class="act" data-act="roll" data-skill="行动">行动<small>DC10 · 技能{{format_message_variable::stat_data.玩家.技能.行动}}</small></button><button class="act" data-act="roll" data-skill="意志">意志<small>DC12 · 技能{{format_message_variable::stat_data.玩家.技能.意志}}</small></button><button class="act refuse" id="d-btn-back" hidden data-act="roll" data-skill="后门反抗">后门反抗<small>DC15 · 进度<span id="d-back-p">0</span><span id="d-back-tip"></span></small></button></div><div style="margin-top:6px;color:var(--c-text-faint);font-size:var(--fs-xs)">她永远说了算。反抗只能换四种东西之一：今晚不做 ／ 她自己动手 ／ 把话说破逼她收手 ／ 换一次谈判。一次一种，一轮一次。</div><div class="thought" id="d-weak" hidden>她的弱点（{{format_message_variable::stat_data.郝佳期.后门类型}}）：{{format_message_variable::stat_data.郝佳期.后门描述}}</div><div class="verdict" id="d-verdict" hidden><span class="big"><span class="pill" id="d-vd-tier">{{format_message_variable::stat_data.玩家._本轮判定.综合}}</span></span> <span style="color:var(--c-text-faint)">{{format_message_variable::stat_data.玩家._本轮判定.行为}}</span><div class="rounds"><div class="rd" id="d-vd-r0" hidden>侦察<b id="d-vd-r0v">—</b></div><div class="rd" id="d-vd-r1" hidden>行动<b id="d-vd-r1v">—</b></div><div class="rd" id="d-vd-r2" hidden>反应<b id="d-vd-r2v">—</b></div></div><div id="d-vd-alert" hidden style="margin-top:5px">警觉度 +<span id="d-vd-alertv">0</span></div><div id="d-vd-desc" style="margin-top:3px">{{format_message_variable::stat_data.玩家._本轮判定.说明}}</div><div style="margin-top:5px;color:var(--c-text-faint);font-size:var(--fs-xs)">判定已写入变量，AI 不重算、不质疑</div></div></div></div>
+<div class="card"><div class="card-hd"><svg class="ico" viewBox="0 0 24 24"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 4l-2 .6a7 7 0 01-.8 2l1 1.8-1.4 1.4-1.8-1a7 7 0 01-2 .8L13 21h-2l-.6-2a7 7 0 01-2-.8l-1.8 1L5.2 18l1-1.8a7 7 0 01-.8-2L3 13v-2l2-.6a7 7 0 01.8-2l-1-1.8L6.2 5.2l1.8 1a7 7 0 012-.8L11 3h2l.6 2a7 7 0 012 .8l1.8-1 1.4 1.4-1 1.8a7 7 0 01.8 2L21 11z"/></svg><span>设置</span><button class="hd-btn" data-act="refresh">✦</button></div><div class="card-bd"><div class="row"><span class="k">主题</span><span class="v" style="display:flex;gap:6px"><button class="btn-min" id="d-th-夜间" data-act="theme" data-val="夜间">夜间</button><button class="btn-min" id="d-th-浅色" data-act="theme" data-val="浅色">浅色</button></span></div></div></div>
+</div>
 <script>
 (function(){
 "use strict";
@@ -158,7 +179,7 @@ var DEFAULT_STAT={元数据:{日数:1,小时:23,时段:"夜晚",回合:0,难度:
  阶段守卫:{已锁定:false,结局已触发:false,结局类型:null,后日谈已读:false},
  设置:{主题:"夜间"}};
 
-var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",pick:"",cx:"",结果:""};
+var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",pick:"",cx:"",结果:"",模板:""};
 var UID_ORDER=["hao_jiaqi","su_mei","lin_wanqing","su_qing","han_xue","bai_lu","tao_tao","lian_nai","you_zi","xiao_ye","qin_yu","ling"];
 var SKILLS={观察:{dc:12},行动:{dc:10},意志:{dc:12}};
 
@@ -168,6 +189,7 @@ var SKILLS={观察:{dc:12},行动:{dc:10},意志:{dc:12}};
    ★ 难度用【乘法】不用加法（引擎规范明写：无论基准值多高，难度感受一致）
    ★ S 夹在 5~95：永远不会 0%（留一线）也永远不会有 100%（不出现必胜僵局） */
 var 基础要求={"微":5,"中":10,"强":20,"极":35};   // 她这一关的底（小 —— 她起步时要求本来就不高）
+var DC表={"微":12,"中":15,"强":18,"极":22};   /* DC 表：每条选项的等级 → DC（E3 重写时漏掉，这里补回） */
 /* ★ 三档 = 她怎么玩你：基=她要求的倍数（乘法难度）｜强=她强度进要求的比重｜阶=她进阶的加成 */
 var 难度档={"普通":{基:0.30,强:0.62,阶:1.43},
             "困难":{基:2.80,强:0.29,阶:0.87},
@@ -314,220 +336,193 @@ function grade(t){ if(t<=5)return "大失败"; if(t<=10)return "失败"; if(t<=1
 var DELTA={"大失败":15,"失败":10,"勉强成功":5,"成功":1,"大成功":0};
 var EVENT_BAD=["撞见：他或第三方中途醒来/闯入，行为被迫中断","留证：水渍与纸团被发现，他起疑","目击：邻居看见她从这门进","惊动：他被惊醒没看清，警觉+5、她暴露恐惧+10","误发：照片错发到班级群，群暴露风险上升","设备：手机被她落在客厅，被他先看到"];
 var EVENT_GOOD=["顺水推舟：目标睡梦中彻底配合","线索反用：他手里的线索被她反过来利用","地位提升：苏媚点赞，积分+10~+20","痴迷加深：她对儿子的痴迷+5~+10","克制反噬：他事后罪恶感回升，察觉+1","意外发现：翻到日记或调查痕迹"];
-
-/* ====== 渲染 ====== */
-function renderTop(){
-  var m=g("元数据",{}), day=num(m.日数,1), exam=num(m.高考日,100), remain=Math.max(0,exam-day);
-  var s='<div class="card">'+hd("him","欲妈群","v3")+'<div class="card-bd">';
-  s+='<div class="row"><span class="k">时间</span><span class="v">Day '+day+" · "+esc(m.时段||"—")+" "+String(num(m.小时,0)).padStart(2,"0")+":00 · 回合"+num(m.回合,0)+"</span></div>";
-  s+='<div class="row"><span class="k">距高考</span>'+bar(day/exam*100,"var(--c-info)")+'<span class="v">'+remain+" 天</span></div>";
-  s+='<div class=\"row\"><span class=\"k\">难度</span><span class=\"v\">'+pill(取难度())+"</span></div>";
-  var guard=g("阶段守卫",{});
-  if(guard.结局已触发) s+='<div class="row"><span class="k">结局</span><span class="v">'+pill(guard.结局类型||"已触发","danger")+"</span></div>";
-  return s+"</div></div>";
-}
-function renderHim(){
-  var p=g("玩家",{}), 学业=p.学业||{}, 心理=p.心理||{}, 身=p.身体||{}, aware=p.察觉值||{}, today=p.今日||{};
-  var s='<div class="card">'+hd("him","他",(p.学校||""))+'<div class="card-bd">';
-  s+=lab("成绩",学业.成绩,"var(--c-info)",[60,80]);
-  s+=lab("欲望",心理.欲望,"var(--c-primary-strong)",[60,80]);
-  s+=lab("理智",心理.理智,"var(--c-safe)");
-  s+=lab("警觉度",p.警觉度,"var(--c-warn)",[31,61,81]);
-  s+='<div class="g2" style="margin-top:6px">'+
-     '<div class="row"><span class="k">体力</span><span class="v">'+Math.round(pct(身.体力))+"</span></div>"+
-     '<div class="row"><span class="k">性欲</span><span class="v">'+Math.round(pct(身.性欲))+"</span></div>"+
-     '<div class="row"><span class="k">今日</span><span class="v">射精'+num(today.射精次数)+" · 幻触"+num(today.幻触次数)+"</span></div>"+
-     '<div class="row"><span class="k">怀疑</span><span class="v">'+Math.round(pct(心理.怀疑))+"</span></div>"+
-     "</div>";
-  s+='<div class="g3" style="margin-top:6px">'+
-     lab("真相",aware.假阳具真相,"var(--c-love)",[60,80])+
-     lab("群存在",aware.群存在,"var(--c-love)",[50,60])+
-     lab("母亲欲望",aware.母亲欲望,"var(--c-love)",[50,70])+
-     lab("幻触",aware.幻触,"var(--c-love)",[30,50])+
-     "</div>";
-  var jp=p._本轮判定||{};
-  if(jp.行为||jp.说明) s+='<div class="row"><span class="k">本轮判定</span><span class="v" style="font-weight:400">'+pill(jp.行为||"—")+(jp.综合?pill(jp.综合,(String(jp.综合).indexOf("大成功")>=0||String(jp.综合).indexOf("成功")>=0)?"hot":"warn"):"")+(jp.说明?" "+esc(jp.说明):"")+"</span></div>";
-  var ev=String(p.证据清单||"").split("、").filter(Boolean);
-  if(ev.length) s+='<div class="row"><span class="k">证据</span><span class="v" style="font-weight:400">'+ev.map(esc).join(" · ")+(ev.length>=3?pill("已达法律结局线","danger"):"（满3件触发法律结局）")+"</span></div>";
-  return s+"</div></div>";
-}
-function renderMom(){
-  var h=g("郝佳期",{}), 心理=h.心理||{}, 关=h.关系||{}, 统=h.统计||{}, 竞=h.竞赛||{};
-  var s='<div class="card">'+hd("mom","郝佳期","Lv."+num(h.群等级,3)+" · 阶段"+num(h.阶段,1))+'<div class="card-bd">';
-  var _d0=num((g("元数据",{})||{}).日数,1), _st=num(h.阶段起始日,1), _days=Math.max(1,_d0-_st+1);
-  s+='<div class="row"><span class="k">阶段</span>'+bar(h.阶段进度,"var(--c-primary-strong)")+'<span class="v">'+num(h.阶段,1)+" / 5 · 第"+_days+"天</span></div>";
-  s+='<div class="g2">'+
-     lab("兴奋",心理.兴奋,"var(--c-primary-strong)")+lab("润滑",心理.润滑,"var(--c-primary)")+
-     lab("理智",心理.理智,"var(--c-info)")+lab("痴迷",心理.痴迷,"var(--c-primary-strong)")+
-     lab("罪恶感",心理.罪恶感,"var(--c-love)")+lab("勇气",心理.勇气,"var(--c-warn)")+
-     lab("暴露恐惧",心理.暴露恐惧,"var(--c-warn)")+lab("叛逆恐惧",关.叛逆恐惧,"var(--c-primary)",[40,70])+
-     "</div>";
-  s+='<div class="row"><span class="k">关系</span><span class="v">亲密'+Math.round(pct(关.亲密度))+" · 信任"+Math.round(pct(关.信任度))+" · 边界"+Math.round(pct(关.边界))+"</span></div>";
-  s+='<div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400">'+esc(STAGE_LINE[num(h.阶段,1)]||"—")+"</span></div>";
-  s+=lab("后门",h.后门进度,"var(--c-danger)");
-  s+='<div class="row"><span class="k">后门</span><span class="v">'+pill(h.后门类型||"—")+(h.后门已发现?pill("已发现","warn"):pill("未发现"))+(h.后门已利用?pill("已利用","danger"):"")+"</span></div>";
-  if(h.后门策略) s+='<div class="thought">策略：'+esc(h.后门策略)+"</div>";
-  s+='<div class="row"><span class="k">统计</span><span class="v" style="font-weight:400">偷抚'+num(统.偷抚次数)+" · 诱导"+num(统.诱导射精)+" · 假阳具"+num(统.假阳具使用)+" · 暴露"+num(统.暴露次数)+"</span></div>";
-  s+='<div class="row"><span class="k">积分</span><span class="v">'+num(h.积分)+" ｜ 今日排名 "+(竞.今日排名?esc(竞.今日排名):"—")+" ｜ 得分 "+num(竞.今日得分)+"</span></div>";
-  if(心理.此刻想法) s+='<div class="thought">'+esc(心理.此刻想法)+"</div>";
-  return s+"</div></div>";
-}
+/* ══════════════════════════════════════════════════════════════
+   ★ 值分两类：
+     ① 静态值 → 写在 HTML 里的宏 {{format_message_variable::stat_data.…}}，由 ST 渲染楼层时替换
+     ② 派生值（要做减法/除法/查表/映射/条件显隐）→ 宏表达不了，只能 JS 填
+   下面这一坨就是 ② 的全部；① 一个都不在这里出现。
+   ══════════════════════════════════════════════════════════════ */
+var RE_宏=/\{\{format_message_variable::([^}]+)\}\}/g;
+var RE_宏有=/\{\{format_message_variable::/;
+function id(n){ return document.getElementById(n); }
+/* UID → 姓名（宏只能取原值，UID 到姓名这一步只能 JS 翻）*/
 function nameOf(uid){
   if(!uid) return "—";
   if(uid==="hao_jiaqi") return "郝佳期";
-  var d=g("群.成员详情."+uid,null);
+  var d=_.get(S.stat,"群.成员详情."+uid,null);
   return (d&&d.姓名)?d.姓名:uid;
 }
-function renderGroup(){
-  var gr=g("群",{}), md=gr.成员详情||{}, 秘=gr.秘密任务||{};
-  var s='<div class="card">'+hd("grp","欲妈群","活跃"+Math.round(pct(gr.活跃度))+"% · 在线"+num(gr.在线数)+"/"+num(gr.成员数,12))+'<div class="card-bd">';
-  s+='<div class="row"><span class="k">今日主题</span><span class="v" style="font-weight:400">'+esc(gr.今日主题||"（未发布）")+"</span></div>";
-  s+=lab("暴露风险",gr.暴露风险,"var(--c-danger)",[31,61,81]);
-  var lg=gr.联盟||{}, lk=Object.keys(lg);
-  if(lk.length) s+='<div class="row"><span class="k">联盟</span><span class="v" style="font-weight:400">'+lk.map(function(u){return nameOf(u)+":"+lg[u]}).join(" · ")+'</span></div>';
-  var wk=String(gr.周竞赛历史||"").split("；").filter(Boolean);
-  if(wk.length){ var lw=wk[wk.length-1].split("|");
-    s+='<div class="row"><span class="k">上期结算</span><span class="v">'+esc(lw[1]||"—")+"（周起始 Day"+num(lw[0],1)+'）</span></div>'; }
-  if(秘.进行中) s+='<div class="row"><span class="k">秘密任务</span><span class="v" style="font-weight:400">'+pill("进行中","warn")+" "+esc(秘.成员)+" · "+esc(秘.内容)+"（Day"+num(秘.期限日)+"前）</span></div>";
-  var partyList=UID_ORDER.filter(function(u){return partyReady(u)}).map(nameOf);
-  s+='<div class="row"><span class="k">群周派对</span><span class="v" style="font-weight:400">'+(partyList.length?esc(partyList.join(" · "))+"（阶段5+暴露100，已受邀）":"暂无成员达标 · 门槛 阶段5 且 暴露100")+"</span></div>";
-  s+='<div class="members" style="margin-top:8px">';
-  UID_ORDER.forEach(function(uid){
-    var d=(uid==="hao_jiaqi")?{姓名:"郝佳期",阶段:num(g("郝佳期.阶段",1),1),等级:num(g("郝佳期.群等级",3),3),在线:true}:md[uid];
+function 填(n,t){ var e=id(n); if(e) e.textContent=(t==null?"":String(t)); }
+function 宽(n,w){ var e=id(n); if(e){ var x=Math.max(0,Math.min(100,num(w,0))); e.style.width=(Math.round(x*100)/100)+"%"; } }
+function 隐(n,h){ var e=id(n); if(e) e.hidden=!!h; }
+function 牌(n,文,cls){ var e=id(n); if(!e) return; e.textContent=文==null?"":String(文); e.className="pill"+(cls?" "+cls:""); }
+
+/* ── 宏兜底：CDN 载入的 HTML 不经过 ST 宏替换（宏只在消息文本渲染时替换），
+      这时面板里会留下一串字面量 {{format_message_variable::…}}。
+      这里把它们按变量填掉：模板留一份，每次重绘先还原再填 → 值照样跟着变量走。 */
+function 宏值(路径){
+  路径=String(路径||"").replace(/^stat_data\./,"");
+  var v=_.get(S.stat,路径,"");
+  return (v==null)?"":String(v);
+}
+function 补宏(root){
+  if(!root||!S.stat) return;
+  var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null,false), ns=[];
+  while(w.nextNode()){ if(RE_宏有.test(w.currentNode.nodeValue)) ns.push(w.currentNode); }
+  ns.forEach(function(n){ n.nodeValue=n.nodeValue.replace(RE_宏,function(_m,p){ return 宏值(p); }); });
+  Array.prototype.forEach.call(root.querySelectorAll("*"),function(el){
+    ["style","class","value","placeholder","title"].forEach(function(a){
+      var v=el.getAttribute(a);
+      if(!v||v.indexOf("{{format_message_variable")<0) return;
+      el.setAttribute(a, v.replace(RE_宏,function(_m,p){ return 宏值(p); }));
+    });
+  });
+}
+function 补模板(){
+  var root=id("root"); if(!root) return;
+  if(!S.模板) S.模板=root.innerHTML;              /* 首次：留住原始模板 */
+  if(S.模板.indexOf("{{format_message_variable")<0) return;   /* ST 已替换过 → 别动，值随楼层 */
+  if(document.activeElement&&document.activeElement.id==="ymq-cx") return;  /* 正在打字就别重排 */
+  root.innerHTML=S.模板;
+  补宏(root);
+  var i=id("ymq-cx"); if(i) i.value=S.cx||"";
+}
+
+/* ── 派生值（宏算不出来的：减法 / 除法 / 查表 / 映射）── */
+function 派生(){
+  var st=S.stat||{}, m=st.元数据||{}, p=st.玩家||{}, h=st.郝佳期||{}, gr=st.群||{};
+  var day=num(m.日数,1), exam=num(m.高考日,100);
+  填("d-hour", String(num(m.小时,0)).padStart(2,"0"));
+  填("d-remain", Math.max(0,exam-day)+" 天");
+  宽("d-exam-bar", day/exam*100);
+  填("d-diff", 取难度());
+  填("d-mom-days", Math.max(1,day-num(h.阶段起始日,1)+1));
+  填("d-mom-line", STAGE_LINE[num(h.阶段,1)]||"—");
+  UID_ORDER.forEach(function(u){
+    if(u==="hao_jiaqi") return;
+    var d=g("群.成员详情."+u,null);
     if(!d||!d.姓名) return;
-    s+='<div class="mem'+(S.open===uid?" on":"")+'" data-uid="'+uid+'"><span class="dot'+((d.在线===false)?" off":"")+'"></span><div class="nm">'+esc(d.姓名)+'</div><div class="sub">阶段'+num(d.阶段,1)+" · Lv."+num(d.等级,1)+"</div></div>";
+    var 阶=num(d.阶段,1);
+    宽("d-sbar-"+u, 阶*20);
+    填("d-days-"+u, Math.max(1,day-num(d.阶段起始日,1)+1));
+    填("d-line-"+u, STAGE_LINE[阶]||"—");
   });
-  s+="</div>"+renderDetail()+"</div></div>";
-  return s;
 }
-function renderDetail(){
-  if(S.open==="hao_jiaqi"){
-    var h=g("郝佳期",{}), t=g("假阳具",{}), aw=g("玩家.察觉值",{});
-    var _ex=num(aw.母亲欲望,0);
-    var s='<div class="detail"><h4>郝佳期 · 主线</h4>'+
-      '<div class="row"><span class="k">绑定</span><span class="v">'+esc(t.绑定目标||"主角")+"</span></div>"+
-      '<div class="row"><span class="k">暴露度</span>'+bar(_ex,"var(--c-danger)",[100])+'<span class="v">'+Math.round(_ex)+(partyReady("hao_jiaqi")?pill("群P已达标","hot"):"")+"</span></div>"+
-      '<div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段'+num(h.阶段,1)+"/5 · 暴露"+Math.round(_ex)+"/100</span></div>"+
-      '<div class="row"><span class="k">后门</span>'+bar(num(h.后门进度,0),"var(--c-danger)",[60,80])+'<span class="v">'+Math.round(num(h.后门进度,0))+"</span></div>"+
-      '<div class="row"><span class="k">弱点</span><span class="v">'+pill(h.后门类型||"—")+(h.后门已发现?pill("已发现","warn"):pill("未发现"))+(h.后门已利用?pill("已利用","danger"):"")+"</span></div>"+
-      '<div class="thought">'+esc(h.后门描述||"（弱点尚未被撞见，写在她自己的阶段条目里）")+"</div>"+
-      '<div class="thought">'+esc((h.心理||{}).此刻想法||"（此刻想法为空）")+"</div></div>";
-    return s;
+
+/* ── 条件显隐（宏表达不了的：空就藏 / 布尔 / 选中态）── */
+function 显隐(){
+  var st=S.stat||{}, p=st.玩家||{}, h=st.郝佳期||{}, gr=st.群||{}, t=st.假阳具||{}, 局=st.局面||{}, gd=st.阶段守卫||{};
+  var 日=num((st.元数据||{}).日数,1);
+  /* 顶栏 */
+  隐("d-ending", !gd.结局已触发);
+  填("d-ending-t", gd.结局类型||"已触发");
+  /* 他 */
+  var jp=p._本轮判定||{};
+  隐("d-himv", !(jp.行为||jp.说明));
+  var 综=String(jp.综合||"");
+  牌("d-himv-tier", 综||"—", (综.indexOf("大成功")>=0||综.indexOf("成功")>=0)?"hot":"warn");
+  var ev=String(p.证据清单||"").split("、").filter(Boolean);
+  隐("d-ev", !ev.length);
+  if(ev.length){
+    var e=id("d-ev-t"); if(e) e.innerHTML=ev.map(esc).join(" · ")+(ev.length>=3?'<span class="pill danger">已达法律结局线</span>':"（满3件触发法律结局）");
   }
-  var d=g("群.成员详情."+S.open,null);
-  if(!d||!d.姓名) return '<div class="detail"><div class="empty">该成员暂无详细数据（未建档）</div></div>';
-  var s='<div class="detail"><h4>'+esc(d.姓名)+" · "+esc(d.角色||"")+"</h4>";
-  s+='<div class="row"><span class="k">儿子</span><span class="v">'+esc(d.儿子名||"—")+(d.儿子在场?pill("在场","hot"):"")+"</span></div>";
-  var _d0b=num((g("元数据",{})||{}).日数,1), _stb=num(d.阶段起始日,1), _daysb=Math.max(1,_d0b-_stb+1);
-  s+='<div class="row"><span class="k">阶段</span>'+bar(num(d.阶段,1)*20,"var(--c-primary-strong)")+'<span class="v">'+num(d.阶段,1)+" / 5 · 第"+_daysb+"天</span></div>";
-  s+='<div class="g2">'+lab("兴奋",d.兴奋,"var(--c-primary-strong)")+lab("润滑",d.润滑,"var(--c-primary)")+
-     lab("罪恶感",d.罪恶感,"var(--c-love)")+lab("痴迷",d.痴迷,"var(--c-primary-strong)")+
-     lab("勇气",d.勇气,"var(--c-warn)")+lab("暴露恐惧",d.暴露恐惧,"var(--c-warn)")+"</div>";
-  var _r=d.关系||{}, _s=d.统计||{};
-  s+='<div class="row"><span class="k">与儿子</span><span class="v">亲密'+Math.round(pct(_r.亲密度))+" · 信任"+Math.round(pct(_r.信任度))+" · 边界"+Math.round(pct(_r.边界))+"</span></div>";
-  s+='<div class="row"><span class="k">累计</span><span class="v" style="font-weight:400">假阳具'+num(_s.假阳具使用)+" · 偷抚"+num(_s.偷抚次数)+" · 诱导"+num(_s.诱导射精)+" · 暴露"+num(_s.暴露次数)+"</span></div>";
-  var _ex=num(d.暴露度,0);
-  s+='<div class="row"><span class="k">暴露度</span>'+bar(_ex,"var(--c-danger)",[100])+'<span class="v">'+Math.round(_ex)+(partyReady(S.open)?pill("群P已达标","hot"):"")+"</span></div>";
-  s+='<div class="row"><span class="k">群P门槛</span><span class="v" style="font-weight:400">阶段'+num(d.阶段,1)+"/5 · 暴露"+Math.round(_ex)+"/100</span></div>";
-  var ex=d.专属||{};
-  if(ex.竞技纪录!=null) s+="<div class=\"row\"><span class=\"k\">竞技纪录</span><span class=\"v\">"+num(ex.竞技纪录)+"</span></div>";
-  s+='<div class="row"><span class="k">本档能到</span><span class="v" style="font-weight:400">'+esc(STAGE_LINE[num(d.阶段,1)]||"—")+"</span></div>";
-  s+=lab("后门",d.后门进度,"var(--c-danger)");
-  s+='<div class="row"><span class="k">后门</span><span class="v">'+pill(d.后门类型||"—")+(d.后门已发现?pill("已发现","warn"):pill("未发现"))+"</span></div>";
-  if(d.后门策略) s+='<div class="thought">策略：'+esc(d.后门策略)+"</div>";
-  if(d.此刻想法) s+='<div class="thought">'+esc(d.此刻想法)+"</div>";
-  return s+"</div>";
-}
-function renderToy(){
-  var t=g("假阳具",{});
-  var s='<div class="card">'+hd("toy","假阳具",(t.是否激活===false?"休眠":"激活"))+'<div class="card-bd">';
-  s+='<div class="row"><span class="k">持有者</span><span class="v">'+pill(nameOf(t.当前持有者),"hot")+"（Day"+num(t.持有起始日)+"~"+num(t.持有到期日)+"）</span></div>";
-  if(t.借用者) s+='<div class="row"><span class="k">借用中</span><span class="v">'+pill(nameOf(t.借用者),"warn")+" 剩 "+num(t.借用期限)+" 周</span></div>";
-  s+='<div class="row"><span class="k">今日</span><span class="v">'+num(t.今日使用)+" 次 · 上次 "+num(t.上次使用时)+" 时</span></div>";
-  return s+"</div></div>";
-}
-function renderDice(){
-  var p=g("玩家",{}), last=p._本轮判定||{};
-  var s='<div class="card">'+hd("dice","行动判定","LCG 确定性骰")+'<div class="card-bd">';
-  /* ══ 她这一关摆出来的（AI 写进 局面.当前选项，这里只渲染，不解析数据）══ */
-  var 局=g("局面",{}), 选项=局.当前选项||{};
-  if(!S.pick){ var _pk=String(局.她已选||""); if(_pk && String((选项[_pk]||{}).文本||"").trim()) S.pick=_pk; }
-  var 格=["一","二","三","四"].filter(function(k){return String((选项[k]||{}).文本||"").trim();});
-  var 她选=String(局.她已选||"");
-  if(格.length){
-    s+='<div class="opt-head">她这一关摆出来的'+(她选?"　★ 她挑的是第 "+她选+" 条":"")+'<br>每条都有自己的技能与 DC ——「顺着」＝照做并推进，「拒」＝用意志硬拦。点了就直接判、直接推进下一轮。</div><div class="opts">';
-    格.forEach(function(k){
-      var o=选项[k]||{};
-      var 技=String(o.技能||"行动"), dc=(DC表[String(o.等级||"微")]||12);
-      s+='<div class="opt'+(她选===k?" picked":"")+'">'
-        +'<b>'+k+'</b>'+esc(o.文本)
-        +'<small>等级 '+esc(o.等级||"微")+' · 拦它用 <b>'+esc(技)+'</b>（DC'+dc+'）· 考验 <b>'+esc(o.主对||"拦住")+'</b>'+(o.代价?" · 代价："+esc(o.代价):"")+'</small>'
-        +'<div class="opt-btns">'
-        +'<button data-act="do" data-k="'+k+'">顺着</button>'
-        +'<button data-act="no" data-k="'+k+'">拒</button>'
-        +'</div></div>';
-    });
-    s+='</div>';
-    s+='<div class="acts"><button class="act" data-act="watch">我不动，就看着她</button></div>';
-  }else{
-    s+='<div class="opt-head">这一关她还没摆选项 —— 等她先出手（她会写进 局面.当前选项 的四格）。</div>';
-  }
-  /* ★ 判定/操作结果无条件显示（原来放在选项区的 if 里，她没摆选项时就不显示了） */
-  if(S.结果){ s+='<div class="res">'+esc(S.结果)+'</div>'; }
-  /* ══ 自定义：他想做别的 —— 先交给她判（AI 定技能/等级/主对），判完这里出「掷」 ══ */
-  var 自=局.自定义||{};
-  s+='<div class="cx"><div class="cx-h">我自己要做别的（写一句你想做的，交给她判）</div>';
-  s+='<input class="cx-in" id="ymq-cx" placeholder="例：翻身把脸埋进枕头里，装作还在睡" value="'+esc(S.cx||"")+'">';
-  if(String(自.文本||"").trim() && 自.待掷){
-    s+='<div class="cx-ready">她已经判过：「'+esc(自.文本)+'」→ 用 <b>'+esc(自.技能)+'</b>（DC'+((DC表[String(自.等级||"中")])||15)+'）· 考验 <b>'+esc(自.主对)+'</b></div>';
-    s+='<div class="acts"><button class="act" data-act="rollcx">掷骰，看看成不成</button>'
-      +'<button class="act" data-act="cxcancel">算了，不做了</button></div>';
-  }else{
-    s+='<div class="acts"><button class="act" data-act="askcx">交给她判（她会定技能与难度）</button></div>';
-  }
-  s+='</div>';
-  s+='<div class="acts" style="margin-top:8px">';
-  Object.keys(SKILLS).forEach(function(nm){
-    s+='<button class="act" data-act="roll" data-skill="'+nm+'">'+nm+"<small>DC"+SKILLS[nm].dc+" · 技能"+num((p.技能||{})[nm],0)+"</small></button>";
+  /* 郝佳期 */
+  牌("d-mom-bds", h.后门已发现?"已发现":"未发现", h.后门已发现?"warn":"");
+  隐("d-mom-bdu", !h.后门已利用);
+  隐("d-mom-str", !String(h.后门策略||"").trim());
+  隐("d-mom-thk", !String((h.心理||{}).此刻想法||"").trim());
+  /* 群 */
+  var lg=gr.联盟||{}, lk=Object.keys(lg);
+  隐("d-ally", !lk.length);
+  if(lk.length) 填("d-ally-t", lk.map(function(u){return nameOf(u)+":"+lg[u]}).join(" · "));
+  var wk=String(gr.周竞赛历史||"").split("；").filter(Boolean);
+  隐("d-week", !wk.length);
+  if(wk.length){ var lw=wk[wk.length-1].split("|"); 填("d-week-t", (lw[1]||"—")+"（周起始 Day"+num(lw[0],1)+"）"); }
+  隐("d-secret", !(gr.秘密任务||{}).进行中);
+  var pl=UID_ORDER.filter(function(u){return partyReady(u)}).map(nameOf);
+  填("d-party-t", pl.length?pl.join(" · ")+"（阶段5+暴露100，已受邀）":"暂无成员达标 · 门槛 阶段5 且 暴露100");
+  /* 成员格与详情 */
+  UID_ORDER.forEach(function(u){
+    var d=(u==="hao_jiaqi")?{在线:true}:(gr.成员详情||{})[u];
+    var mm=id("d-mem-"+u); if(mm) mm.className="mem"+(S.open===u?" on":"");
+    var dt=id("d-det-"+u); if(dt) dt.hidden=(S.open!==u);
+    var dot=id("d-dot-"+u); if(dot) dot.className="dot"+(d&&d.在线===false?" off":"");
   });
-  var hjq=g("郝佳期",{}), hbk=num(hjq.后门进度,0);
-  if(hjq.后门已发现&&hbk>=60){
-    s+='<button class="act'+(hjq.后门已利用?"":" refuse")+'" data-act="roll" data-skill="后门反抗">后门反抗<small>DC15 · 进度'+Math.round(hbk)+(hbk>=80?" · 可动用":" · 待满80")+"</small></button>";
-  }
-  s+="</div>";
-  s+='<div style="margin-top:6px;color:var(--c-text-faint);font-size:var(--fs-xs)">她永远说了算。反抗只能换四种东西之一：今晚不做 ／ 她自己动手 ／ 把话说破逼她收手 ／ 换一次谈判。一次一种，一轮一次。</div>';
-  if(hjq.后门已发现) s+='<div class="thought">她的弱点（'+esc(hjq.后门类型||"")+'）：'+esc(hjq.后门描述||"（尚未写清）")+"</div>";
-  if(last&&last.行为) s+=renderVerdict(last);
-  return s+"</div></div>";
+  UID_ORDER.forEach(function(u){
+    if(u==="hao_jiaqi"){
+      隐("d-party-hao_jiaqi", !partyReady("hao_jiaqi"));
+      牌("d-bds-hao_jiaqi", h.后门已发现?"已发现":"未发现", h.后门已发现?"warn":"");
+      隐("d-bdu-hao_jiaqi", !h.后门已利用);
+      return;
+    }
+    var d=(gr.成员详情||{})[u]; if(!d||!d.姓名) return;
+    隐("d-son-"+u, !d.儿子在场);
+    隐("d-party-"+u, !partyReady(u));
+    隐("d-jz-"+u, !((d.专属||{}).竞技纪录!=null));
+    牌("d-bds-"+u, d.后门已发现?"已发现":"未发现", d.后门已发现?"warn":"");
+    隐("d-str-"+u, !String(d.后门策略||"").trim());
+    隐("d-thk-"+u, !String(d.此刻想法||"").trim());
+  });
+  /* 假阳具 */
+  填("d-toy-state", (t.是否激活===false)?"休眠":"激活");
+  填("d-toy-holder", nameOf(t.当前持有者));
+  隐("d-toy-borrow", !String(t.借用者||"").trim());
+  填("d-toy-borrower", nameOf(t.借用者));
+  /* 她摆的四格 */
+  var 选项=局.当前选项||{}, 她选=String(局.她已选||""), 有几格=0;
+  ["一","二","三","四"].forEach(function(k){
+    var o=选项[k]||{}, 有=!!String(o.文本||"").trim();
+    if(有) 有几格++;
+    var el=id("d-opt-"+k); if(!el) return;
+    el.hidden=!有;
+    el.className="opt"+(她选&&她选===k?" picked":"");
+    填("d-dc-"+k, DC表[String(o.等级||"微")]||12);
+    隐("d-cost-"+k, !String(o.代价||"").trim());
+  });
+  隐("d-opt-head", !有几格);
+  隐("d-opt-none", !!有几格);
+  隐("d-watch", !有几格);
+  填("d-opt-pick", 她选?"　★ 她挑的是第 "+她选+" 条":"");
+  /* 自定义 */
+  var 自=局.自定义||{}, 有自=!!String(自.文本||"").trim()&&!!自.待掷;
+  隐("d-cx-ready", !有自);
+  隐("d-cx-roll", !有自);
+  隐("d-cx-ask", !!有自);
+  填("d-cx-dc", DC表[String(自.等级||"中")]||15);
+  /* 后门反抗按钮 */
+  var hb=num(h.后门进度,0);
+  隐("d-btn-back", !(h.后门已发现&&hb>=60));
+  填("d-back-p", Math.round(hb));
+  填("d-back-tip", hb>=80?" · 可动用":" · 待满80");
+  var bb=id("d-btn-back"); if(bb) bb.className="act"+(h.后门已利用?"":" refuse");
+  隐("d-weak", !h.后门已发现);
+  /* 判定结果 */
+  var last=p._本轮判定||{};
+  隐("d-verdict", !last.行为);
+  牌("d-vd-tier", last.综合||"—", ({"大失败":"danger","失败":"warn","部分成功":"","成功":"safe","大成功":"hot"})[last.综合]||"");
+  var rr=last.投掷||[];
+  [0,1,2].forEach(function(i){
+    隐("d-vd-r"+i, rr[i]==null);
+    if(rr[i]!=null) 填("d-vd-r"+i+"v", num(rr[i]));
+  });
+  隐("d-vd-alert", !num(last.警觉));
+  填("d-vd-alertv", num(last.警觉));
+  /* 本轮结果提示 */
+  填("ymq-res", S.结果||"");
+  隐("ymq-res", !String(S.结果||"").trim());
+  /* 主题按钮 */
+  var a1=id("d-th-夜间"), a2=id("d-th-浅色");
+  if(a1) a1.className="btn-min"+(S.theme==="夜间"?" on":"");
+  if(a2) a2.className="btn-min"+(S.theme==="浅色"?" on":"");
 }
-function renderVerdict(v){
-  var cls=({"大失败":"danger","失败":"warn","部分成功":"","成功":"safe","大成功":"hot"})[v.综合]||"";
-  var s='<div class="verdict"><span class="big">'+pill(v.综合,cls)+'</span> <span style="color:var(--c-text-faint)">'+esc(v.行为)+"</span>";
-  if(v.投掷&&v.投掷.length){
-    s+='<div class="rounds">';
-    ["侦察","行动","反应"].forEach(function(nm,i){
-      if(v.投掷[i]==null) return;
-      s+='<div class="rd">'+nm+"<b>"+num(v.投掷[i])+"</b></div>";
-    });
-    s+="</div>";
-  }
-  if(num(v.警觉)) s+='<div style="margin-top:5px">警觉度 +'+num(v.警觉)+"</div>";
-  if(v.说明) s+='<div style="margin-top:3px">'+esc(v.说明)+"</div>";
-  return s+'<div style="margin-top:5px;color:var(--c-text-faint);font-size:var(--fs-xs)">判定已写入变量，AI 不重算、不质疑</div></div>';
+
+/* ── 同步：只做 派生 + 显隐，绝不重建 DOM（宏里的值要留住）── */
+function 同步(){
+  try{ 派生(); }catch(e){ console.warn("[欲妈群] 派生失败",e); }
+  try{ 显隐(); }catch(e){ console.warn("[欲妈群] 显隐失败",e); }
 }
-function renderSettings(){
-  var st=g("设置",{})||{};
-  var s='<div class="card">'+hd("cog","设置","")+'<div class="card-bd">';
-  s+='<div class="row"><span class="k">主题</span><span class="v" style="display:flex;gap:6px">'+
-     '<button class="btn-min'+(S.theme==="夜间"?" on":"")+'" data-act="theme" data-val="夜间">夜间</button>'+
-     '<button class="btn-min'+(S.theme==="浅色"?" on":"")+'" data-act="theme" data-val="浅色">浅色</button></span></div>';
-  return s+"</div></div>";
-}
-function render(){
-  var html=renderTop()+renderHim()+renderMom()+renderGroup()+renderToy()+renderDice()+renderSettings();
-  var root=document.getElementById("root");
-  if(root) root.innerHTML=html;
-}
+/* 旧代码里到处调 render() —— 保留同名，指向 同步()，这样下面那一大段交互代码一个字都不用改 */
+function render(){ 同步(); }
 
 /* ====== 行动：跑骰并写变量 ====== */
 /* ══ 推给 AI（2026-09-22 第三次修）══
@@ -667,6 +662,7 @@ async function doRoll(skill, 追发, 强制dc, 主对){
     var pExp=num((p.心理||{}).兴奋,0), pWill=num((p.技能||{}).意志,0), pSan=num((p.心理||{}).理智,90), pDes=num((p.心理||{}).欲望,0);
     var hBrain=num((h.心理||{}).理智,100), hCou=num((h.心理||{}).勇气,50), hObs=num((h.心理||{}).痴迷,0), hExp=num((h.心理||{}).兴奋,0), hTrust=num((h.关系||{}).信任度,60);
     var hBack=num(h.后门进度,0);
+    var 等级="";   /* 旧版 doRoll 收 等级 入参，E3 重写后没传 —— 这里兜底，避免 ReferenceError 打断判定 */
     /* ══ 三档难度参数（2026-09-22；脚本 _work/check/_diff_search*.mjs）══
        目标：普通=势均力敌（60/75/90）｜困难=他慢慢占上风但一直被压（35/52/73）｜地狱=她绝对压制
        dk=DC 系数｜D=三轮修正｜gw=他的成长权重｜hk=她的增益 */
@@ -707,9 +703,9 @@ async function doRoll(skill, 追发, 强制dc, 主对){
     var R=Math.max(0,Math.min(100,Math.round(基R*档.基*(1+她强度/100*档.强)+num(阶修表[String(她阶段)],0)*档.阶)));
     /* ③ 差值 / 成功率 / 掷值 / 档位 */
     var D=Math.round((P-R)*100)/100;
-    var S=Math.max(5,Math.min(95,Math.round(50+D)));
+    var 率=Math.max(5,Math.min(95,Math.round(50+D)));
     var V=Math.round((rollAt(base,1)%100000)/1000*100)/100;
-    var 成功=(V<S);
+    var 成功=(V<率);
     var 综合=judgeTier(D,成功);
     var rolls=[V], mods=[], grades=[综合];
     var 警觉=isBack?((综合==="大成功"||综合==="成功")?-(5+((day*13+turn*7)%11)):(DELTA[综合]||0)):(DELTA[综合]||0);
@@ -718,6 +714,7 @@ async function doRoll(skill, 追发, 强制dc, 主对){
       if(综合==="大失败"){ var _k=((day*7+hour*3+turn)%EVENT_BAD.length); _ev="｜抽到事件："+EVENT_BAD[_k]; }
       else if(综合==="大成功"){ var _k2=((day*11+hour*5+turn)%EVENT_GOOD.length); _ev="｜抽到事件："+EVENT_GOOD[_k2]; }
     }catch(e){}
+    var backOk=isBack&&hBack>=80&&(综合==="大成功"||综合==="成功");
     var 说明=(isBack&&backOk)
       ? "拿攥住的弱点换一次退让：今晚不做／她自己动手／把话说破逼她收手／换一次谈判，四选一。她同意这一次，三天后再换一条路走。"
       : (综合==="大成功"?"一气呵成，几乎没留痕迹。"
@@ -750,17 +747,17 @@ async function doRoll(skill, 追发, 强制dc, 主对){
       await writeStat(function(box){
         box.局面=box.局面||{};
         box.局面.判定结果={ 选项:String(追发||skill), 技能:skill, 难度:难度名, 等级:String(等级||""),
-          P:Math.round(P), R:R, D:D, 成功率:S, 掷值:V, 结果:综合, 警觉:警觉, 说明:说明 };
+          P:Math.round(P), R:R, D:D, 成功率:率, 掷值:V, 结果:综合, 警觉:警觉, 说明:说明 };
       });
     }catch(e){ console.warn("[欲妈群] 写判定结果失败",e); }
     /* ★ 判定块：用 <判定>…</判定> 包起来 —— 世界书规定 AI 认这个标记，正则把它美化成面板（placement [1,2] 连 user 消息一起美化） */
     var 摘要="<判定>他做的："+(追发||skill)
       +" ｜ 技能："+skill+" ｜ 难度："+难度名+(等级?" ｜ 等级："+等级:"")
-      +" ｜ P="+Math.round(P)+" − R="+R+" = D"+D+" ｜ 成功率 "+S+"% ｜ 掷出 "+V
+      +" ｜ P="+Math.round(P)+" − R="+R+" = D"+D+" ｜ 成功率 "+率+"% ｜ 掷出 "+V
       +" ｜ 结果："+综合+(_ev?" ｜"+_ev.replace(/^｜/,""):"")+" ｜ "+说明
       +"</判定>（★ 引擎已算好，照它写这一轮：不要另掷骰、不要改数值、不要重算。）";
     推给AI(摘要);                                                          /* ★ 不 await */
-    S.结果=说明+"　（P"+Math.round(P)+" − R"+R+" = D"+D+"　成功率"+S+"%　掷"+V+" → "+综合+"）";
+    S.结果=说明+"　（P"+Math.round(P)+" − R"+R+" = D"+D+"　成功率"+率+"%　掷"+V+" → "+综合+"）";
     refresh(false);
   }catch(e){ console.warn("[欲妈群] 判定失败",e); S.source="判定失败"; }
   render();
@@ -805,7 +802,7 @@ function loadTheme(){
   S.theme=t; applyTheme();
 }
 async function refresh(showBusy){
-  if(showBusy){ render(); }
+  /* 宏渲染：静态骨架已在 HTML 里，不再需要 busy 占位重绘 */
   try{
     var st=readStat();
     if(st){ S.stat=st; S.source="MVU"; } else { S.stat=DEFAULT_STAT; S.source="默认"; }
@@ -814,7 +811,7 @@ async function refresh(showBusy){
     console.warn("[欲妈群] 读取失败，走默认值",e);
   }
   try{ await maintainLedger(); }catch(e){ console.warn("[欲妈群] 记账失败",e); }
-  loadTheme(); render();
+  loadTheme(); 补模板(); 同步();
 }
 /* 系统记账：这三个列表由面板维护，变量模型不写。
    （Zod 卡拿不到 extensible，AI 只要对数组用 add 就会被 MVU 判 SCHEMA 违规） */
@@ -876,14 +873,12 @@ function 指纹取(){
   try{ return S.stat ? JSON.stringify(S.stat) : ""; }catch(e){ return String(Date.now()); }
 }
 function 可能重绘(强制){
+  /* ★ 先重读变量再比指纹：原来拿旧 S.stat 比，变量改了但指纹没变就不重绘 —— 这正是「面板不跟着更新」的一个原因 */
+  try{ var st=readStat(); if(st) S.stat=st; }catch(e){}
   var f=指纹取();
   if(强制 || f!==指纹){
     指纹=f;
-    try{
-      var st=readStat(); if(st) S.stat=st;   /* ★ 重绘前重新读一遍变量 */
-      loadTheme();
-      render();
-    }catch(e){ console.warn("[欲妈群] 重绘失败",e); }
+    try{ loadTheme(); 补模板(); 同步(); }catch(e){ console.warn("[欲妈群] 重绘失败",e); }
   }
 }
 /* ① 酒馆事件 */
