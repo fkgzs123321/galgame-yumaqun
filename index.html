@@ -208,20 +208,20 @@ function lastMsgId(){
   try{ var f=window.frameElement; if(f&&f.closest){var m=f.closest(".mes"); if(m&&m.getAttribute("mesid")!=null) return Number(m.getAttribute("mesid"));} }catch(e){}
   return null;
 }
-async function readStat(){
+/* ★ 同步版（照 旮旯给木-同级生2）：原来 await Mvu.getMvuData 是 async，
+   一旦它不 resolve，refresh() 就永远卡住 —— 这也是「一直转圈」的一种。
+   现在只用同步的 getVariables，Mvu 的异步接口一个都不 await。 */
+function readStat(){
   var id=lastMsgId();
-  if(id==null) throw new Error("找不到楼层号");
+  if(id==null) return null;
   S.msgId=id;
-  if(window.Mvu&&Mvu.getMvuData){
-    var d=await Mvu.getMvuData({type:"message",message_id:id});
-    if(d&&d.stat_data) return d.stat_data;
-    if(d&&d.元数据) return d;
-  }
-  if(typeof getVariables==="function"){
-    var v=getVariables({type:"message",message_id:id});
-    if(v&&v.stat_data) return v.stat_data;
-    if(v&&v.元数据) return v;
-  }
+  try{
+    if(typeof getVariables==="function"){
+      var v=getVariables({type:/message/,message_id:id});
+      if(v&&v.stat_data) return v.stat_data;
+      if(v&&v.元数据) return v;
+    }
+  }catch(e){ console.warn("[欲妈群] getVariables 失败",e); }
   return null;
 }
 async function writeStat(mut){
@@ -745,7 +745,7 @@ function loadTheme(){
 async function refresh(showBusy){
   if(showBusy){ render(); }
   try{
-    var st=await readStat();
+    var st=readStat();
     if(st){ S.stat=st; S.source="MVU"; } else { S.stat=DEFAULT_STAT; S.source="默认"; }
   }catch(e){
     S.stat=DEFAULT_STAT; S.source="未初始化";
@@ -778,7 +778,7 @@ async function maintainLedger(){
       b.群.周竞赛历史=c.slice(-8).join("；");
     }
   });
-  S.stat=null; var st=await readStat(); if(st) S.stat=st;
+  S.stat=null; var st=readStat(); if(st) S.stat=st;
 }
 
 /* ====== 初始化（防重复挂载）====== */
