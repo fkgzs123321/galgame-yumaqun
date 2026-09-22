@@ -452,10 +452,11 @@ function renderDice(){
     });
     s+='</div>';
     s+='<div class="acts"><button class="act" data-act="watch">我不动，就看着她</button></div>';
-    if(S.结果){ s+='<div class="res">'+esc(S.结果)+'</div>'; }
   }else{
     s+='<div class="opt-head">这一关她还没摆选项 —— 等她先出手（她会写进 局面.当前选项 的四格）。</div>';
   }
+  /* ★ 判定/操作结果无条件显示（原来放在选项区的 if 里，她没摆选项时就不显示了） */
+  if(S.结果){ s+='<div class="res">'+esc(S.结果)+'</div>'; }
   /* ══ 自定义：他想做别的 —— 先交给她判（AI 定技能/等级/主对），判完这里出「掷」 ══ */
   var 自=局.自定义||{};
   s+='<div class="cx"><div class="cx-h">我自己要做别的（写一句你想做的，交给她判）</div>';
