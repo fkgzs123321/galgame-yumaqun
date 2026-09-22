@@ -466,7 +466,7 @@ function renderDice(){
     s+='<div class="acts"><button class="act" data-act="rollcx">掷骰，看看成不成</button>'
       +'<button class="act" data-act="cxcancel">算了，不做了</button></div>';
   }else{
-    s+='<div class="acts"><button class="act" data-act="askcx"'+(String(S.cx||"").trim()?"":" disabled")+'>交给她判（她会定技能与难度）</button></div>';
+    s+='<div class="acts"><button class="act" data-act="askcx">交给她判（她会定技能与难度）</button></div>';
   }
   s+='</div>';
   s+='<div class="acts" style="margin-top:8px">';
@@ -583,8 +583,11 @@ async function 看着她(){
 async function 交给她判(){
   /* 不用 busy：同级生2 没有这个，busy 一卡住右上角 ✦ 就永远转 */
   try{
-    var 文=String(S.cx||"").trim();
-    if(!文){ S.source="先写一句"; render(); return; }
+    /* ★ 直接读 DOM 里的输入框（不信 S.cx：输入法/粘贴可能不触发 input 事件） */
+    var _inp=document.getElementById("ymq-cx");
+    var 文=_inp?String(_inp.value||"").trim():"";
+    S.cx=文;
+    if(!文){ S.结果="先在输入框里写一句你想做什么，再点这个按钮。"; render(); return; }
     /* 照 旮旯给木-同级生2：不推送、不 await。只把这句话写进变量，面板提示他自己发一句；
        她（AI）下一轮读 局面.自定义.待判 就会判它该用什么技能/等级/主对。 */
     await writeStat(function(box){
