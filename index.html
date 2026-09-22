@@ -99,6 +99,10 @@ button.opt.picked{border-color:var(--c-primary-strong);background:var(--c-btn-ac
 button.opt b{color:var(--c-primary-strong);margin-right:5px}
 button.opt small{display:block;margin-top:3px;font-size:var(--fs-xs);color:var(--c-text-faint);font-weight:400}
 button.act:disabled{opacity:.45;cursor:not-allowed}
+.cx{margin-top:10px;padding:9px;border:1px dashed var(--c-border);border-radius:9px;background:var(--c-surface)}
+.cx-h{margin-bottom:6px;font-size:var(--fs-xs);color:var(--c-text-faint);line-height:1.5}
+.cx-in{width:100%;box-sizing:border-box;padding:8px 9px;border-radius:8px;border:1px solid var(--c-border);background:var(--c-bg-2);color:var(--c-text);font-family:var(--font);font-size:var(--fs-sm)}
+.cx-ready{margin:7px 0;padding:7px 8px;border-radius:7px;background:var(--c-btn-active);font-size:var(--fs-xs);line-height:1.6;color:var(--c-text-muted)}
 .opt-btns{display:flex;gap:6px;margin-top:7px}
 .opt-btns button{flex:1;padding:6px 8px;border-radius:7px;border:1px solid var(--c-border);background:var(--c-btn);color:var(--c-text);font-family:var(--font);font-size:var(--fs-xs);cursor:pointer;transition:.15s}
 .opt-btns button:hover{background:var(--c-btn-hover)}
@@ -154,7 +158,7 @@ var DEFAULT_STAT={元数据:{日数:1,小时:23,时段:"夜晚",回合:0,难度:
  阶段守卫:{已锁定:false,结局已触发:false,结局类型:null,后日谈已读:false},
  设置:{主题:"夜间"}};
 
-var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",busy:false,pick:""};
+var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",busy:false,pick:"",cx:""};
 var UID_ORDER=["hao_jiaqi","su_mei","lin_wanqing","su_qing","han_xue","bai_lu","tao_tao","lian_nai","you_zi","xiao_ye","qin_yu","ling"];
 var SKILLS={观察:{dc:12},行动:{dc:10},意志:{dc:12}};
 
@@ -434,6 +438,18 @@ function renderDice(){
   }else{
     s+='<div class="opt-head">这一关她还没摆选项 —— 等她先出手（她会写进 局面.当前选项 的四格）。</div>';
   }
+  /* ══ 自定义：他想做别的 —— 先交给她判（AI 定技能/等级/主对），判完这里出「掷」 ══ */
+  var 自=局.自定义||{};
+  s+='<div class="cx"><div class="cx-h">我自己要做别的（写一句你想做的，交给她判）</div>';
+  s+='<input class="cx-in" id="ymq-cx" placeholder="例：翻身把脸埋进枕头里，装作还在睡" value="'+esc(S.cx||"")+'">';
+  if(String(自.文本||"").trim() && 自.待掷){
+    s+='<div class="cx-ready">她已经判过：「'+esc(自.文本)+'」→ 用 <b>'+esc(自.技能)+'</b>（DC'+((DC表[String(自.等级||"中")])||15)+'）· 考验 <b>'+esc(自.主对)+'</b></div>';
+    s+='<div class="acts"><button class="act" data-act="rollcx">掷骰，看看成不成</button>'
+      +'<button class="act" data-act="cxcancel">算了，不做了</button></div>';
+  }else{
+    s+='<div class="acts"><button class="act" data-act="askcx"'+(String(S.cx||"").trim()?"":" disabled")+'>交给她判（她会定技能与难度）</button></div>';
+  }
+  s+='</div>';
   s+='<div class="acts" style="margin-top:8px">';
   Object.keys(SKILLS).forEach(function(nm){
     s+='<button class="act" data-act="roll" data-skill="'+nm+'">'+nm+"<small>DC"+SKILLS[nm].dc+" · 技能"+num((p.技能||{})[nm],0)+"</small></button>";
@@ -532,6 +548,52 @@ async function 看着她(){
   }catch(e){ console.warn("[欲妈群] 看着她 失败",e); }
   finally{ S.busy=false; render(); }
 }
+/* 自定义三步：① 交给她判（AI 定技能/等级/主对）→ ② 面板出「掷」→ ③ 掷完推送进下一轮 */
+async function 交给她判(){
+  if(S.busy) return; S.busy=true; render();
+  try{
+    var 文=String(S.cx||"").trim();
+    if(!文){ S.source="先写一句"; S.busy=false; render(); return; }
+    await 推给AI("【我这轮想做】"+文+"\n"
+      +"★ 请判断这件事该用哪个技能（观察／行动／意志）、什么等级（微／中／强／极）、主对（识破／拦住／扛住／全场），"
+      +"然后写进变量：\n"
+      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/文本\",\"value\":\""+文.replace(/"/g,'')+"\"}\n"
+      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/技能\",\"value\":\"行动\"}\n"
+      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/等级\",\"value\":\"中\"}\n"
+      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/主对\",\"value\":\"拦住\"}\n"
+      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/待掷\",\"value\":true}\n"
+      +"你自己这次不要掷骰，等她按你给的技能与难度掷完再把结果推给你。");
+  }catch(e){ console.warn("[欲妈群] 交给她判 失败",e); }
+  finally{ S.busy=false; render(); }
+}
+
+async function 掷自定义(){
+  if(S.busy) return;
+  var 自=(g("局面",{})||{}).自定义||{};
+  var 文=String(自.文本||"").trim();
+  if(!文){ S.source="她还没判完"; render(); return; }
+  var 技=String(自.技能||"行动"), 等=String(自.等级||"中"), 主=String(自.主对||"拦住");
+  await doRoll(技, "【我这轮的动作】"+文+"。", DC表[等]||15, 主);
+  try{
+    await writeStat(function(box){
+      box.局面=box.局面||{};
+      box.局面.自定义={文本:"",技能:"行动",等级:"中",主对:"拦住",待掷:false};
+    });
+  }catch(e){ console.warn("[欲妈群] 清自定义失败",e); }
+  S.cx="";
+  await refresh(false);
+}
+
+async function 取消自定义(){
+  try{
+    await writeStat(function(box){
+      box.局面=box.局面||{};
+      box.局面.自定义={文本:"",技能:"行动",等级:"中",主对:"拦住",待掷:false};
+    });
+  }catch(e){}
+  S.cx=""; S.source="算了"; await refresh(false);
+}
+
 async function doRoll(skill, 追发, 强制dc, 主对){
   if(S.busy) return; S.busy=true; render();
   try{
@@ -637,6 +699,9 @@ async function setVar(path,val){
 }
 
 /* ====== 事件 ====== */
+document.addEventListener("input",function(ev){
+  var el=ev.target; if(el&&el.id==="ymq-cx"){ S.cx=el.value; var b=document.querySelector('[data-act="askcx"]'); if(b) b.disabled=!String(S.cx||"").trim(); }
+},false);
 document.addEventListener("click",function(ev){
   var mem=ev.target.closest("[data-uid]");
   if(mem){ S.open=mem.getAttribute("data-uid"); render(); return; }
@@ -647,6 +712,9 @@ document.addEventListener("click",function(ev){
   else if(act==="do") 做选项("do", el.getAttribute("data-k"));
   else if(act==="no") 做选项("no", el.getAttribute("data-k"));
   else if(act==="watch") 看着她();
+  else if(act==="askcx") 交给她判();
+  else if(act==="rollcx") 掷自定义();
+  else if(act==="cxcancel") 取消自定义();
   else if(act==="theme"){ S.theme=el.getAttribute("data-val"); applyTheme(); render(); setVar("设置.主题",S.theme); }
 },false);
 function applyTheme(){
