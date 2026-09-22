@@ -513,29 +513,36 @@ function render(){
 }
 
 /* ====== 行动：跑骰并写变量 ====== */
-/* ══ 推给 AI（2026-09-22 按 @types 官方接口重做）══
-   之前错了两处：① 参数写 content（官方是 message）② await 了它 → 一旦不 resolve 就把界面卡住。
-   现在：createChatMessages([{role:'user', message}]) 在聊天末尾插一条【玩家发言】，
-   AI 下一轮一定读到。★ 不 await、不用 busy —— 发射后不管，界面不会卡。
-   另外仍把结论写进 局面.判定结果 作为双保险（世界书 EJS 也能读到）。 */
+/* ══ 推给 AI（2026-09-22 第三次修）══
+   用户要的是「内容进输入框 → 自动发送 → AI 回下一楼」。
+   查 slash_command.txt：
+     /setinput (string) —— 把用户输入设为这段文本，并【用管道传给下一条命令】
+     /send     (string) —— 向聊天记录添加用户消息，★ 但不触发生成
+     /trigger           —— 触发生成
+   所以链路 = /setinput <文本> | /send | /trigger
+   ★ 文本必须【压成单行】：slash 命令里出现换行会把命令截断。
+   ★ 一律不 await —— 一旦它不 resolve 就会把界面卡住（之前转圈就是这个原因）。 */
+function 压一行(s){
+  return String(s==null?"":s).replace(/\r\n|\r|\n/g," ").replace(/\|/g,"丨").replace(/\s+/g," ").trim();
+}
 function 推给AI(文本){
+  var t=压一行(文本);
+  if(!t) return false;
   try{
-    if(typeof createChatMessages==="function"){
-      createChatMessages([{ role:"user", message:String(文本) }]);      /* ★ 不 await */
-      return true;
-    }
-  }catch(e){ console.warn("[欲妈群] createChatMessages 失败",e); }
-  try{
-    if(typeof triggerSlash==="function"){                               /* 兜底：走输入框 */
-      triggerSlash("/setinput "+JSON.stringify(String(文本)));
-      triggerSlash("/send "+JSON.stringify(String(文本)));
+    if(typeof triggerSlash==="function"){
+      triggerSlash("/setinput "+t+" | /send | /trigger");      /* ★ 不 await */
       return true;
     }
   }catch(e){ console.warn("[欲妈群] triggerSlash 失败",e); }
+  try{
+    if(typeof createChatMessages==="function"){                /* 兜底：直接插一条 user 消息 */
+      createChatMessages([{ role:"user", message:t }]);
+      return true;
+    }
+  }catch(e){ console.warn("[欲妈群] createChatMessages 失败",e); }
   S.source="没能推给 AI";
   return false;
 }
-
 /* ══ 点了选项就直接走完：判定 → 写变量 → 推给 AI → 下一轮 ══
    模式 do = 顺着（用这一格自己的技能）｜no = 拒（用意志硬拦） */
 async function 做选项(模式, k){
@@ -574,7 +581,7 @@ async function 看着她(){
       box.局面=box.局面||{};
       box.局面.判定结果={选项:文本,等级:"",消耗:0,成功率:0,掷值:0,结果:"未判定",档位:"未判定",说明:"他什么都没做，就看着她。"};
     });
-    推给AI("【我这轮的动作】我什么都没做，就看着她。「"+文本+"」\n★ 按她这一条往下写，不要自己另掷骰、不要改数值。");
+    推给AI("【我这轮的动作】我什么都没做，就看着她。「"+文本+"」 ｜ ★ 按她这一条往下写，不要自己另掷骰、不要改数值。");
     S.结果="他什么都没做，就看着她。";
   }catch(e){ console.warn("[欲妈群] 看着她 失败",e); }
   render();
@@ -730,13 +737,11 @@ async function doRoll(skill, 追发, 强制dc, 主对){
       });
     }catch(e){ console.warn("[欲妈群] 写判定结果失败",e); }
     /* ★ 判定块：用 <判定>…</判定> 包起来 —— 世界书规定 AI 认这个标记，正则把它美化成面板（placement [1,2] 连 user 消息一起美化） */
-    var 摘要="<判定>"
-      +"他做的："+(追发||skill)+"\n"
-      +"技能："+skill+" ｜ 难度："+难度名+(等级?" ｜ 等级："+等级:"")+"\n"
-      +"P="+Math.round(P)+" − R="+R+" = D"+D+" ｜ 成功率 "+S+"% ｜ 掷出 "+V+"\n"
-      +"结果："+综合+(_ev?" ｜"+_ev.replace(/^｜/,""):"")+" ｜ "+说明
-      +"</判定>"
-      +"\n（★ 引擎已算好，照这个结果写这一轮：不要自己另掷骰、不要改数值、不要重算。）";
+    var 摘要="<判定>他做的："+(追发||skill)
+      +" ｜ 技能："+skill+" ｜ 难度："+难度名+(等级?" ｜ 等级："+等级:"")
+      +" ｜ P="+Math.round(P)+" − R="+R+" = D"+D+" ｜ 成功率 "+S+"% ｜ 掷出 "+V
+      +" ｜ 结果："+综合+(_ev?" ｜"+_ev.replace(/^｜/,""):"")+" ｜ "+说明
+      +"</判定>（★ 引擎已算好，照它写这一轮：不要另掷骰、不要改数值、不要重算。）";
     推给AI(摘要);                                                          /* ★ 不 await */
     S.结果=说明+"　（P"+Math.round(P)+" − R"+R+" = D"+D+"　成功率"+S+"%　掷"+V+" → "+综合+"）";
     refresh(false);
