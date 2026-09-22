@@ -157,6 +157,12 @@ var DEFAULT_STAT={元数据:{日数:1,小时:23,时段:"夜晚",回合:0,难度:
 var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",busy:false,pick:""};
 var UID_ORDER=["hao_jiaqi","su_mei","lin_wanqing","su_qing","han_xue","bai_lu","tao_tao","lian_nai","you_zi","xiao_ye","qin_yu","ling"];
 var SKILLS={观察:{dc:12},行动:{dc:10},意志:{dc:12}};
+
+/* ★ 提成全局（2026-09-22）：取难度() 里要查 DIFF，而这些原来定义在 doRoll 内部 → 会 ReferenceError */
+var DC表={"微":12,"中":15,"强":18,"极":22};
+var DIFF={"普通":{dk:0.20,D: 0,gw:0.5,hk:0.6},
+          "困难":{dk:0.25,D:-2,gw:0.7,hk:0.8},
+          "地狱":{dk:0.30,D:-4,gw:0.4,hk:0.8}};
 /* 群周派对·群P 门槛：阶段5 且 完全暴露100（郝佳期取 玩家.察觉值.母亲欲望，其他成员取 暴露度） */
 // 每档能做到哪一步（服务玩法：玩家据此决定拦哪一条）
 var STAGE_LINE = {
@@ -220,6 +226,14 @@ async function writeStat(mut){
 
 /* ====== 工具 ====== */
 function g(p,d){ return _.get(S.stat,p,d); }
+/* ★ 取难度（2026-09-22）：优先读 stat_data.元数据.难度；读不到就读 chat 层的 欲妈群难度 兜底
+   —— 因为开局表单在第 0 楼写、而面板读最新楼层，一旦有后续楼层就可能读不到。 */
+function 取难度(){
+  var a=String((g("元数据",{})||{}).难度||"");
+  if(DIFF && DIFF[a]) return a;
+  try{ if(typeof getVariables==="function"){ var c=getVariables({type:/chat/})||{}; var b=String(c.欲妈群难度||""); if(DIFF[b]) return b; } }catch(e){}
+  return "普通";
+}
 function num(v,d){ var n=Number(v); return isFinite(n)?n:(d||0); }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]}); }
 function pct(v){ return Math.max(0,Math.min(100,num(v,0))); }
@@ -266,7 +280,7 @@ function renderTop(){
   var s='<div class="card">'+hd("him","欲妈群","v3")+'<div class="card-bd">';
   s+='<div class="row"><span class="k">时间</span><span class="v">Day '+day+" · "+esc(m.时段||"—")+" "+String(num(m.小时,0)).padStart(2,"0")+":00 · 回合"+num(m.回合,0)+"</span></div>";
   s+='<div class="row"><span class="k">距高考</span>'+bar(day/exam*100,"var(--c-info)")+'<span class="v">'+remain+" 天</span></div>";
-  s+='<div class="row"><span class="k">难度</span><span class="v">'+pill(m.难度||"普通")+"</span></div>";
+  s+='<div class=\"row\"><span class=\"k\">难度</span><span class=\"v\">'+pill(取难度())+"</span></div>";
   var guard=g("阶段守卫",{});
   if(guard.结局已触发) s+='<div class="row"><span class="k">结局</span><span class="v">'+pill(guard.结局类型||"已触发","danger")+"</span></div>";
   return s+"</div></div>";
@@ -531,18 +545,14 @@ async function doRoll(skill, 追发, 强制dc){
     /* ══ 三档难度参数（2026-09-22；脚本 _work/check/_diff_search*.mjs）══
        目标：普通=势均力敌（60/75/90）｜困难=他慢慢占上风但一直被压（35/52/73）｜地狱=她绝对压制
        dk=DC 系数｜D=三轮修正｜gw=他的成长权重｜hk=她的增益 */
-    var DC表={"微":12,"中":15,"强":18,"极":22};
-    var DIFF={"普通":{dk:0.20,D: 0,gw:0.5,hk:0.6},
-              "困难":{dk:0.25,D:-2,gw:0.7,hk:0.8},
-              "地狱":{dk:0.30,D:-4,gw:0.4,hk:0.8}};
-    var df=DIFF[String(g("元数据",{}).难度||"普通")]||DIFF["困难"];
+    var df=DIFF[取难度()]||DIFF["普通"];
     /* ══ 阶段 debuff（用户 2026-09-22 定）：她的阶段越高，他越难；阶段 5 = 共生锁定，直接断崖
        为什么用分级 debuff 而不是线性项：阶段 5 的设定是「完全占有，反抗无意义」——
        那必须是【台阶式下坠】而不是平滑变难，否则玩家感受不到锁死这件事。 */
     /* ★ 表里填【罚多少】（正值），公式里做减法。别填负值再减，那样双重负号会变成加成。 */
     var 阶罚表={"普通":[0,1,3,6,10], "困难":[0,2,4,7,11], "地狱":[0,2,3,4,6]};
     var 她阶段=Math.min(5,Math.max(1,num((g("郝佳期",{})||{}).阶段,1)));
-    var 阶罚=(阶罚表[String(g("元数据",{}).难度||"普通")]||阶罚表["困难"])[她阶段-1];
+    var 阶罚=(阶罚表[取难度()]||阶罚表["普通"])[她阶段-1];
     var dc=Math.round((强制dc||(SKILLS[skill]?SKILLS[skill].dc:(isBack?15:12)))*df.dk);
     var 他观察=num((p.技能||{}).观察,10), 他意志=num((p.技能||{}).意志,15);
     var 他理智=num((p.心理||{}).理智,90), 他警觉=num(p.警觉度,0);
