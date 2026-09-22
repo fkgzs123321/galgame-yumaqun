@@ -121,7 +121,7 @@ button.opt.picked{border-color:var(--c-primary-strong);box-shadow:inset 0 0 0 1p
 .btn-min{min-height:36px;padding:4px 10px;border-radius:8px;border:1px solid var(--c-border);background:var(--c-btn);color:var(--c-text);font-family:var(--font);font-size:var(--fs-sm);cursor:pointer}
 .btn-min.on{background:var(--c-btn-active);border-color:var(--c-border-2)}
 .hd-btn{width:30px;height:30px;margin-left:auto;border-radius:8px;border:1px solid var(--c-border);background:var(--c-btn);color:var(--c-text);cursor:pointer;font-size:13px;line-height:1}
-.hd-btn.spin{animation:sp .8s linear infinite}
+/* .hd-btn.spin 已弃用（不用 busy，就不会有永远转的 ✦） */
 @keyframes sp{to{transform:rotate(360deg)}}
 .empty{padding:8px;color:var(--c-text-faint);font-size:var(--fs-sm);text-align:center}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -158,7 +158,7 @@ var DEFAULT_STAT={元数据:{日数:1,小时:23,时段:"夜晚",回合:0,难度:
  阶段守卫:{已锁定:false,结局已触发:false,结局类型:null,后日谈已读:false},
  设置:{主题:"夜间"}};
 
-var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",busy:false,pick:"",cx:""};
+var S={stat:null,msgId:null,source:"?",open:"hao_jiaqi",theme:"夜间",pick:"",cx:"",结果:""};
 var UID_ORDER=["hao_jiaqi","su_mei","lin_wanqing","su_qing","han_xue","bai_lu","tao_tao","lian_nai","you_zi","xiao_ye","qin_yu","ling"];
 var SKILLS={观察:{dc:12},行动:{dc:10},意志:{dc:12}};
 
@@ -275,7 +275,7 @@ var ICON={
   cog:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 4l-2 .6a7 7 0 01-.8 2l1 1.8-1.4 1.4-1.8-1a7 7 0 01-2 .8L13 21h-2l-.6-2a7 7 0 01-2-.8l-1.8 1L5.2 18l1-1.8a7 7 0 01-.8-2L3 13v-2l2-.6a7 7 0 01.8-2l-1-1.8L6.2 5.2l1.8 1a7 7 0 012-.8L11 3h2l.6 2a7 7 0 012 .8l1.8-1 1.4 1.4-1 1.8a7 7 0 01.8 2L21 11z"/></svg>'
 };
 function hd(icon,title,tag){
-  return '<div class="card-hd">'+ICON[icon]+'<span>'+esc(title)+'</span>'+(tag?'<span class="tag">'+esc(tag)+"</span>":"")+'<button class="hd-btn'+(S.busy?" spin":"")+'" data-act="refresh">✦</button></div>';
+  return '<div class="card-hd">'+ICON[icon]+'<span>'+esc(title)+'</span>'+(tag?'<span class="tag">'+esc(tag)+"</span>":"")+'<button class="hd-btn" data-act="refresh">✦</button></div>';
 }
 
 /* ====== LCG 确定性骰子（与 D20 条目·十三 一致）====== */
@@ -448,6 +448,7 @@ function renderDice(){
     });
     s+='</div>';
     s+='<div class="acts"><button class="act" data-act="watch">我不动，就看着她</button></div>';
+    if(S.结果){ s+='<div class="res">'+esc(S.结果)+'</div>'; }
   }else{
     s+='<div class="opt-head">这一关她还没摆选项 —— 等她先出手（她会写进 局面.当前选项 的四格）。</div>';
   }
@@ -507,28 +508,15 @@ function render(){
 }
 
 /* ====== 行动：跑骰并写变量 ====== */
-/* ★ 推送链路（照 同级生2）：写进输入框 → 停一下让他看见 → 带内容发送 → 触发下一楼
-   坑：/send 必须带参数，裸 /send 会发空值。 */
-async function 推给AI(要发){
-  try{
-    if(typeof triggerSlash==="function"){
-      await triggerSlash("/setinput "+JSON.stringify(要发));
-      await new Promise(function(r){setTimeout(r,260);});
-      await triggerSlash("/send "+JSON.stringify(要发));
-      await triggerSlash("/trigger");
-    }else{
-      var ta=document.querySelector("#send_textarea")||(window.parent&&window.parent.document.querySelector("#send_textarea"));
-      if(ta){ ta.value=要发; ta.dispatchEvent(new Event("input",{bubbles:true})); }
-      if(typeof createChatMessages==="function"){ await createChatMessages([{role:"user",content:要发}]); }
-    }
-    return true;
-  }catch(e){ console.error("[欲妈群] 推送失败",e); S.source="推送失败"; return false; }
-}
+/* ★ 2026-09-22：删掉「/setinput → /send → /trigger」那套推送。
+   同级生2 的 refuse() 根本不做推送 —— 它只在面板里算完、set() 写变量、把结果显示出来，
+   AI 下一轮读 局面.判定结果 就知道发生了什么。
+   我原来的写法里 await triggerSlash('/trigger') 永不返回 → S.busy 卡在 true → 卡片右上角 ✦ 一直转。 */
 
 /* ══ 点了选项就直接走完：判定 → 写变量 → 推给 AI → 下一轮 ══
    模式 do = 顺着（用这一格自己的技能）｜no = 拒（用意志硬拦） */
 async function 做选项(模式, k){
-  if(S.busy) return;
+  /* 不用 busy 守卫 */
   var 局=g("局面",{}), o=((局.当前选项||{})[k])||{};
   var 文本=String(o.文本||"").trim();
   if(!文本){ S.source="这一格是空的"; render(); return; }
@@ -552,36 +540,40 @@ async function 做选项(模式, k){
 
 /* 我不动，就看着她 —— 不判定，直接把这句话推给 AI */
 async function 看着她(){
-  if(S.busy) return; S.busy=true; render();
+  /* 不用 busy：同级生2 没有这个，busy 一卡住右上角 ✦ 就永远转 */
   try{
     var 局=g("局面",{}), k=String(局.她已选||"");
     var o=((局.当前选项||{})[k])||{};
     var 文本=String(o.文本||"").trim()||"她这一关摆出来的那件事";
-    await 推给AI("【我这轮的动作】我什么都没做，就看着她。「"+文本+"」\n★ 按她这一条往下写，不要自己另掷骰、不要改数值。");
+    await writeStat(function(box){
+      box.玩家=box.玩家||{};
+      box.玩家._本轮判定={行为:"看着",综合:"未判定",说明:"他什么都没做，就看着她：「"+文本+"」"};
+      box.局面=box.局面||{};
+      box.局面.判定结果={选项:文本,等级:"",消耗:0,成功率:0,掷值:0,结果:"未判定",档位:"未判定",说明:"他什么都没做，就看着她。"};
+    });
+    S.结果="他什么都没做，就看着她。";
   }catch(e){ console.warn("[欲妈群] 看着她 失败",e); }
-  finally{ S.busy=false; render(); }
+  render();
 }
 /* 自定义三步：① 交给她判（AI 定技能/等级/主对）→ ② 面板出「掷」→ ③ 掷完推送进下一轮 */
 async function 交给她判(){
-  if(S.busy) return; S.busy=true; render();
+  /* 不用 busy：同级生2 没有这个，busy 一卡住右上角 ✦ 就永远转 */
   try{
     var 文=String(S.cx||"").trim();
-    if(!文){ S.source="先写一句"; S.busy=false; render(); return; }
-    await 推给AI("【我这轮想做】"+文+"\n"
-      +"★ 请判断这件事该用哪个技能（观察／行动／意志）、什么等级（微／中／强／极）、主对（识破／拦住／扛住／全场），"
-      +"然后写进变量：\n"
-      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/文本\",\"value\":\""+文.replace(/"/g,'')+"\"}\n"
-      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/技能\",\"value\":\"行动\"}\n"
-      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/等级\",\"value\":\"中\"}\n"
-      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/主对\",\"value\":\"拦住\"}\n"
-      +"{\"op\":\"replace\",\"path\":\"/局面/自定义/待掷\",\"value\":true}\n"
-      +"你自己这次不要掷骰，等她按你给的技能与难度掷完再把结果推给你。");
+    if(!文){ S.source="先写一句"; render(); return; }
+    /* 照 旮旯给木-同级生2：不推送、不 await。只把这句话写进变量，面板提示他自己发一句；
+       她（AI）下一轮读 局面.自定义.待判 就会判它该用什么技能/等级/主对。 */
+    await writeStat(function(box){
+      box.局面=box.局面||{}; box.局面.自定义=box.局面.自定义||{};
+      box.局面.自定义={文本:文, 技能:"", 等级:"", 主对:"", 待判:true, 待掷:false};
+    });
+    S.结果="已经记下来了：「"+文+"」。现在你自己发一句话（比如「我这样做」）—— 她会判这件事该用什么技能与难度。";
   }catch(e){ console.warn("[欲妈群] 交给她判 失败",e); }
-  finally{ S.busy=false; render(); }
+  render();
 }
 
 async function 掷自定义(){
-  if(S.busy) return;
+  /* 不用 busy 守卫 */
   var 自=(g("局面",{})||{}).自定义||{};
   var 文=String(自.文本||"").trim();
   if(!文){ S.source="她还没判完"; render(); return; }
@@ -608,7 +600,7 @@ async function 取消自定义(){
 }
 
 async function doRoll(skill, 追发, 强制dc, 主对){
-  if(S.busy) return; S.busy=true; render();
+  /* 不用 busy：同级生2 没有这个，busy 一卡住右上角 ✦ 就永远转 */
   try{
     var p=g("玩家",{}), h=g("郝佳期",{}), m=g("元数据",{});
     var day=num(m.日数,1), hour=num(m.小时,0), turn=num(m.回合,0);
@@ -698,19 +690,18 @@ async function doRoll(skill, 追发, 强制dc, 主对){
       }
     });
     if(!ok) S.source="写入失败";
-    /* ★ 判定完就把结果推给 AI —— AI 只负责写这一轮，不再自己掷骰 */
-    if(追发){
-      var 摘要=追发
-        +"\n【判定】Day"+day+" "+String(hour).padStart(2,"0")+":00 · "+skill+" · 难度"+难度名
-        +"\n　　能力 P="+Math.round(P)+"　她的要求 R="+R+"　差值 D="+D+"　成功率 "+S+"%　掷出 "+V
-        +"　→ "+综合+(警觉?" · 警觉"+(警觉>0?"+":"")+警觉:"")+_ev
-        +"\n【结果】"+说明
-        +"\n★ 按上面这个结果写这一轮：你不是裁判，不要自己另掷骰、不要改数值、不要重算。";
-      await 推给AI(摘要);
-    }
+    /* ★ 照 旮旯给木-同级生2：不推送。判定结论写进 局面.判定结果，她（AI）下一轮读它就知道发生了什么。 */
+    try{
+      await writeStat(function(box){
+        box.局面=box.局面||{};
+        box.局面.判定结果={ 选项:String(追发||skill), 技能:skill, 难度:难度名, 等级:String(等级||""),
+          P:Math.round(P), R:R, D:D, 成功率:S, 掷值:V, 结果:综合, 警觉:警觉, 说明:说明 };
+      });
+    }catch(e){ console.warn("[欲妈群] 写判定结果失败",e); }
+    S.结果=说明+"　（P"+Math.round(P)+" − R"+R+" = D"+D+"　成功率"+S+"%　掷"+V+" → "+综合+"）";
     await refresh(false);
   }catch(e){ console.warn("[欲妈群] 判定失败",e); S.source="判定失败"; }
-  finally{ S.busy=false; render(); }
+  render();
 }
 async function setVar(path,val){
   var ok=await writeStat(function(box){
@@ -752,14 +743,14 @@ function loadTheme(){
   S.theme=t; applyTheme();
 }
 async function refresh(showBusy){
-  if(showBusy){ S.busy=true; render(); }
+  if(showBusy){ render(); }
   try{
     var st=await readStat();
     if(st){ S.stat=st; S.source="MVU"; } else { S.stat=DEFAULT_STAT; S.source="默认"; }
   }catch(e){
     S.stat=DEFAULT_STAT; S.source="未初始化";
     console.warn("[欲妈群] 读取失败，走默认值",e);
-  }finally{ S.busy=false; }
+  }
   try{ await maintainLedger(); }catch(e){ console.warn("[欲妈群] 记账失败",e); }
   loadTheme(); render();
 }
