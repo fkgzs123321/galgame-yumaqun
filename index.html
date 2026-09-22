@@ -212,16 +212,20 @@ function lastMsgId(){
    一旦它不 resolve，refresh() 就永远卡住 —— 这也是「一直转圈」的一种。
    现在只用同步的 getVariables，Mvu 的异步接口一个都不 await。 */
 function readStat(){
-  var id=lastMsgId();
-  if(id==null) return null;
-  S.msgId=id;
-  try{
-    if(typeof getVariables==="function"){
+  var 起点=lastMsgId();
+  if(起点==null) return null;
+  /* ★★ 从最新楼层【往前找】最近一条带 stat_data 的楼层：
+     MVU 的变量写在 AI 输出的楼层里；玩家自己发过一句之后，最新楼层就是 user 楼层（没有变量），
+     只读最新那一层会读到空 → 面板看起来不更新。开场白那层也带变量，所以一定能找到。 */
+  for(var id=起点; id>=0 && id>起点-60; id--){
+    try{
+      if(typeof getVariables!=="function") break;
       var v=getVariables({type:/message/,message_id:id});
-      if(v&&v.stat_data) return v.stat_data;
-      if(v&&v.元数据) return v;
-    }
-  }catch(e){ console.warn("[欲妈群] getVariables 失败",e); }
+      if(v&&v.stat_data){ S.msgId=id; return v.stat_data; }
+      if(v&&v.元数据){ S.msgId=id; return v; }
+    }catch(e){ console.warn("[欲妈群] getVariables 失败",e); break; }
+  }
+  S.msgId=起点;
   return null;
 }
 /* ★ 同步双写（照 旮旯给木-同级生2 的 set()）：updateVariablesWith 不 await，message + chat 各写一遍。
