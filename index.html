@@ -159,7 +159,10 @@ var UID_ORDER=["hao_jiaqi","su_mei","lin_wanqing","su_qing","han_xue","bai_lu","
 var SKILLS={观察:{dc:12},行动:{dc:10},意志:{dc:12}};
 
 /* ★ 提成全局（2026-09-22）：取难度() 里要查 DIFF，而这些原来定义在 doRoll 内部 → 会 ReferenceError */
-var DC表={"微":12,"中":15,"强":18,"极":22};
+var DC表={"微":12,"中":15,"强":18,"极":22};
+/* ★ 主对 → 三轮权重（2026-09-22）：每条选项考验的东西不一样，权重组合也不同，所以"每个选项的公式不同"。
+   识破=偏侦察轮（他能不能看出蹊跷）｜拦住=偏行动轮（他能不能拦下）｜扛住=偏反应轮（他能不能顶住）｜全场=三轮等权 */
+var 权重表={"识破":[3,1,1], "拦住":[1,3,1], "扛住":[1,1,3], "全场":[1,1,1]};
 var DIFF={"普通":{dk:0.20,D: 0,gw:0.5,hk:0.6},
           "困难":{dk:0.25,D:-2,gw:0.7,hk:0.8},
           "地狱":{dk:0.30,D:-4,gw:0.4,hk:0.8}};
@@ -420,7 +423,7 @@ function renderDice(){
       var 技=String(o.技能||"行动"), dc=(DC表[String(o.等级||"微")]||12);
       s+='<div class="opt'+(她选===k?" picked":"")+'">'
         +'<b>'+k+'</b>'+esc(o.文本)
-        +'<small>等级 '+esc(o.等级||"微")+' · 拦它用 <b>'+esc(技)+'</b>（DC'+dc+'）'+(o.代价?" · 代价："+esc(o.代价):"")+'</small>'
+        +'<small>等级 '+esc(o.等级||"微")+' · 拦它用 <b>'+esc(技)+'</b>（DC'+dc+'）· 考验 <b>'+esc(o.主对||"拦住")+'</b>'+(o.代价?" · 代价："+esc(o.代价):"")+'</small>'
         +'<div class="opt-btns">'
         +'<button data-act="do" data-k="'+k+'">顺着</button>'
         +'<button data-act="no" data-k="'+k+'">拒</button>'
@@ -506,7 +509,7 @@ async function 做选项(模式, k){
   var 头=(模式==="no")
     ? "【我这轮的动作】我拒绝她摆的第"+k+"条：「"+文本+"」。"
     : "【我这轮的动作】她摆的第"+k+"条：「"+文本+"」（"+等级+"级），我顺着做了。";
-  await doRoll(技, 头, dc);
+  await doRoll(技, 头, dc, String(o.主对||"拦住"));
   try{
     await writeStat(function(box){
       box.局面=box.局面||{}; box.局面.当前选项=box.局面.当前选项||{};
@@ -529,7 +532,7 @@ async function 看着她(){
   }catch(e){ console.warn("[欲妈群] 看着她 失败",e); }
   finally{ S.busy=false; render(); }
 }
-async function doRoll(skill, 追发, 强制dc){
+async function doRoll(skill, 追发, 强制dc, 主对){
   if(S.busy) return; S.busy=true; render();
   try{
     var p=g("玩家",{}), h=g("郝佳期",{}), m=g("元数据",{});
@@ -576,7 +579,9 @@ async function doRoll(skill, 追发, 强制dc){
     var rolls=[rollAt(base,1),rollAt(base,2),rollAt(base,3)], mods=[m1,m2,m3], grades=[];
     var _v=[rolls[0]+m1,rolls[1]+m2,rolls[2]+m3];
     for(var i=0;i<3;i++) grades.push(grade(_v[i]));
-    var 综合=grade(Math.round((_v[0]+2*_v[1]+_v[2])/4));
+    var _w=权重表[String(主对||"拦住")]||权重表["拦住"];
+    var _s2=_w[0]+_w[1]+_w[2];
+    var 综合=grade(Math.round((_v[0]*_w[0]+_v[1]*_w[1]+_v[2]*_w[2])/_s2));
     var backOk=isBack&&(综合==="成功"||综合==="大成功")&&hBack>=80;
     var 警觉=isBack?(backOk?-(5+((day*13+turn*7)%11)):(DELTA[综合]||0)):(DELTA[综合]||0);
     var _ev="";
