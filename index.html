@@ -517,6 +517,13 @@ async function doRoll(skill, 追发, 强制dc){
               "困难":{dk:0.25,D:-2,gw:0.7,hk:0.8},
               "地狱":{dk:0.30,D:-4,gw:0.4,hk:0.8}};
     var df=DIFF[String(g("元数据",{}).难度||"普通")]||DIFF["困难"];
+    /* ══ 阶段 debuff（用户 2026-09-22 定）：她的阶段越高，他越难；阶段 5 = 共生锁定，直接断崖
+       为什么用分级 debuff 而不是线性项：阶段 5 的设定是「完全占有，反抗无意义」——
+       那必须是【台阶式下坠】而不是平滑变难，否则玩家感受不到锁死这件事。 */
+    /* ★ 表里填【罚多少】（正值），公式里做减法。别填负值再减，那样双重负号会变成加成。 */
+    var 阶罚表={"普通":[0,1,3,6,10], "困难":[0,2,4,7,11], "地狱":[0,2,3,4,6]};
+    var 她阶段=Math.min(5,Math.max(1,num((g("郝佳期",{})||{}).阶段,1)));
+    var 阶罚=(阶罚表[String(g("元数据",{}).难度||"普通")]||阶罚表["困难"])[她阶段-1];
     var dc=Math.round((强制dc||(SKILLS[skill]?SKILLS[skill].dc:(isBack?15:12)))*df.dk);
     var 他观察=num((p.技能||{}).观察,10), 他意志=num((p.技能||{}).意志,15);
     var 他理智=num((p.心理||{}).理智,90), 他警觉=num(p.警觉度,0);
@@ -529,9 +536,9 @@ async function doRoll(skill, 追发, 强制dc){
        反应轮 = 他意志(+w/5) + 她信任心软(+t/10) + 后门受制(+b/20) − 她兴奋(a/10) − 她勇气(c/20)
        ★ 判据（用户 2026-09-22 确认）：她越有勇气、越痴迷 → 他越容易失败 ⇒ 她的项一律取负。
        注意「侦察轮的她兴奋」是唯一例外：她越兴奋越藏不住 → 对他有利 → 取正。 */
-    var m1=Math.round(hExp*df.hk/20)-Math.round(hCou*df.hk/10)+Math.round(他理智/20)+Math.round(他警觉/10)+Math.round(他观察*df.gw/5)+df.D;
-    var m2=Math.round(技*df.gw/5)-dc-Math.round(hObs*df.hk/10)+willFix+backFix+df.D;
-    var m3=Math.round(他意志*df.gw/5)+Math.round(hTrust*df.hk/10)+Math.round(hBack/20)-Math.round(hExp*df.hk/10)-Math.round(hCou*df.hk/20)+df.D;
+    var m1=Math.round(hExp*df.hk/20)-Math.round(hCou*df.hk/10)+Math.round(他理智/20)+Math.round(他警觉/10)+Math.round(他观察*df.gw/5)+df.D-阶罚;
+    var m2=Math.round(技*df.gw/5)-dc-Math.round(hObs*df.hk/10)+willFix+backFix+df.D-阶罚;
+    var m3=Math.round(他意志*df.gw/5)+Math.round(hTrust*df.hk/10)+Math.round(hBack/20)-Math.round(hExp*df.hk/10)-Math.round(hCou*df.hk/20)+df.D-阶罚;
     /* ══ 聚合（2026-09-22 改，第三版）：加权 (v1 + 2·v2 + v3) / 4 → 直接判档
        为什么要加权：v2 是他这一下（行动轮），权重给 2；侦察/反应各给 1。
        为什么不要“中位档”和“全好才大成功”这类额外规则：中位档会让 v2 的极值作废
