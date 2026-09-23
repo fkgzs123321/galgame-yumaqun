@@ -242,7 +242,7 @@ function readStat(){
   for(var id=起点; id>=0 && id>起点-60; id--){
     try{
       if(typeof getVariables!=="function") break;
-      var v=getVariables({type:/message/,message_id:id});
+      var v=getVariables({type:"message",message_id:id});
       if(v&&v.stat_data){ S.msgId=id; return v.stat_data; }
       if(v&&v.元数据){ S.msgId=id; return v; }
     }catch(e){ console.warn("[欲妈群] getVariables 失败",e); break; }
@@ -294,7 +294,7 @@ function 取难度(){
   /* 兜底：变量（initvar 生效时它是对的） */
   var a=String((g("元数据",{})||{}).难度||"");
   if(难度档 && 难度档[a]) return a;
-  try{ if(typeof getVariables==="function"){ var c=getVariables({type:/chat/})||{}; var b=String(c.欲妈群难度||""); if(难度档[b]) return b; } }catch(e){}
+  try{ if(typeof getVariables==="function"){ var c=getVariables({type:"chat"})||{}; var b=String(c.欲妈群难度||""); if(难度档[b]) return b; } }catch(e){}
   return "普通";
 }
 function num(v,d){ var n=Number(v); return isFinite(n)?n:(d||0); }
