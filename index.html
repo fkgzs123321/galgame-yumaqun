@@ -267,8 +267,8 @@ function writeStat(mut){
       return true;
     }catch(e){ console.warn("[欲妈群] 写入失败",e); return false; }
   }
-  if(id!=null) ok = 跑({type:/message/, message_id:id}) || ok;
-  ok = 跑({type:/chat/}) || ok;
+  if(id!=null) ok = 跑({type:"message", message_id:id}) || ok;
+  ok = 跑({type:"chat"}) || ok;
   return ok;
 }
 
