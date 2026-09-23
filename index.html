@@ -372,18 +372,35 @@ function 宏值(路径){
   var v=_.get(S.stat,路径,"");
   return (v==null)?"":String(v);
 }
+/* ★★ 2026-09-23 重做：不再「整体重建 DOM」。
+   旧做法每次重绘都 root.innerHTML=S.模板（115KB 面板整块重建）→ 点击后界面卡死。
+   现在照 旮旯给木-同级生2 的精神：**首次记下每个含宏的节点和它的原文**，
+   之后只把「值」写回那几个节点，DOM 结构一个都不动。 */
+var 宏节点=null;
+function 收集宏节点(root){
+  宏节点=[];
+  try{
+    var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null,false);
+    while(w.nextNode()){
+      if(RE_宏有.test(w.currentNode.nodeValue)) 宏节点.push({n:w.currentNode, t:w.currentNode.nodeValue});
+    }
+    Array.prototype.forEach.call(root.querySelectorAll("*"),function(el){
+      ["style","class","value","placeholder","title"].forEach(function(a){
+        var v=el.getAttribute(a);
+        if(v&&v.indexOf("{{format_message_variable")>=0) 宏节点.push({e:el, a:a, t:v});
+      });
+    });
+    console.log("[欲妈群] 记下 "+宏节点.length+" 个含宏节点（之后只改文本、不重建 DOM）");
+  }catch(e){ console.warn("[欲妈群] 收集宏节点失败",e); }
+}
 function 补宏(root){
   if(!root||!S.stat) return;
-  var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null,false), ns=[];
-  while(w.nextNode()){ if(RE_宏有.test(w.currentNode.nodeValue)) ns.push(w.currentNode); }
-  ns.forEach(function(n){ n.nodeValue=n.nodeValue.replace(RE_宏,function(_m,p){ return 宏值(p); }); });
-  Array.prototype.forEach.call(root.querySelectorAll("*"),function(el){
-    ["style","class","value","placeholder","title"].forEach(function(a){
-      var v=el.getAttribute(a);
-      if(!v||v.indexOf("{{format_message_variable")<0) return;
-      el.setAttribute(a, v.replace(RE_宏,function(_m,p){ return 宏值(p); }));
-    });
-  });
+  if(!宏节点) 收集宏节点(root);
+  if(!宏节点) return;
+  for(var i=0;i<宏节点.length;i++){
+    var x=宏节点[i], s=x.t.replace(RE_宏,function(_m,p){ return 宏值(p); });
+    try{ if(x.n){ x.n.nodeValue=s; } else { x.e.setAttribute(x.a,s); } }catch(e){}
+  }
 }
 /* ★★ 原文模板从哪儿来（2026-09-23 重做）
    以前是抓 root.innerHTML —— 但 **ST 渲染楼层时会先把那 531 个宏替换掉**，
@@ -397,7 +414,7 @@ function 拉原文(){
     fetch(CDN_自,{cache:"no-cache"}).then(function(r){ return r.text(); }).then(function(txt){
       var m=String(txt).replace(/^\uFEFF?\s*```(?:html|HTML)?\s*\r?\n/,"").replace(/\r?\n```\s*$/,"");
       if(m.indexOf("{{format_message_variable")<0){ console.warn("[欲妈群] 取到的原文里没有宏，放弃当模板"); return; }
-      S.模板=m; S.模板就绪=true;
+      S.模板=m; S.模板就绪=true; 宏节点=null;   /* 让下一次 补宏 重新收集节点 */
       console.log("[欲妈群] 已取到含宏的原文当模板（"+m.length+" 字符）");
       指纹=""; 可能重绘(true);
     });
@@ -405,11 +422,11 @@ function 拉原文(){
 }
 function 补模板(){
   var root=id("root"); if(!root) return;
-  if(!S.模板就绪) return;                    /* 模板没到手 → 别动，让 ST 自己去填 */
-  if(document.activeElement&&document.activeElement.id==="ymq-cx") return;  /* 正在打字就别重排 */
-  root.innerHTML=S.模板;
-  补宏(root);
-  var i=id("ymq-cx"); if(i) i.value=S.cx||"";
+  /* ★ 不再 root.innerHTML=S.模板（那会整块重建 115KB DOM、点一下卡死）。
+     宏的值由 补宏() 就地写回节点；这里只保证输入框里的字还在。 */
+  try{ 补宏(root); }catch(e){}
+  var i=id("ymq-cx");
+  if(i && document.activeElement!==i) i.value=S.cx||"";
 }
 
 /* ── 派生值（宏算不出来的：减法 / 除法 / 查表 / 映射）── */
@@ -860,7 +877,7 @@ async function refresh(showBusy){
     console.warn("[欲妈群] 读取失败，走默认值",e);
   }
   try{ await maintainLedger(); }catch(e){ console.warn("[欲妈群] 记账失败",e); }
-  loadTheme(); 拉原文(); 补模板(); 同步();
+  loadTheme(); if(!S.模板就绪) 拉原文(); 补模板(); 同步();
 }
 /* 系统记账：这三个列表由面板维护，变量模型不写。
    （Zod 卡拿不到 extensible，AI 只要对数组用 add 就会被 MVU 判 SCHEMA 违规） */
